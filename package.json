@@ -6,6 +6,7 @@
   "repository": "aholstenson/datetime-types",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "ci": "npm run coverage && npm run lint",
     "coverage": "jest --coverage",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
@@ -21,10 +22,12 @@
   "engines": {
     "node": ">=8.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "date-fns": "^2.4.1"
+  },
   "devDependencies": {
     "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.9",
+    "@types/node": "^12.7.10",
     "coveralls": "^3.0.6",
     "jest": "^24.9.0",
     "jest-config": "^24.9.0",
