@@ -1,0 +1,36 @@
+{
+  "name": "datetime-types",
+  "version": "0.1.0",
+  "description": "Types for representing date, times, intervals and durations",
+  "license": "MIT",
+  "repository": "aholstenson/datetime-types",
+  "scripts": {
+    "test": "jest",
+    "ci": "npm run coverage && npm run lint",
+    "coverage": "jest --coverage",
+    "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "build": "tsc --module commonjs --target es5 --outDir dist/cjs && tsc --module es6 --target es6 --outDir dist/esm",
+    "prebuild": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.9",
+    "coveralls": "^3.0.6",
+    "jest": "^24.9.0",
+    "jest-config": "^24.9.0",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
+  }
+}
