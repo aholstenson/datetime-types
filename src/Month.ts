@@ -1,4 +1,5 @@
 import { WithMonth } from './types';
+import { compareInt } from './helpers/compareInt';
 
 /**
  * Representation of a month.
@@ -8,6 +9,26 @@ export class Month implements WithMonth {
 
 	private constructor(month: number) {
 		this.month = month;
+	}
+
+	/**
+	 * Get if this month equals another month like object.
+	 *
+	 * @param other
+	 */
+	public equals(other: WithMonth | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this month with another month like object.
+	 *
+	 * @param other
+	 */
+	public compare(other: WithMonth) {
+		return compareInt(this.month, other.month);
 	}
 
 	public static of(month: number) {

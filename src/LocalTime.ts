@@ -1,6 +1,7 @@
 import { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike } from './types';
 
 import { assertInt } from './helpers/assertInt';
+import { compareInt } from './helpers/compareInt';
 
 /**
  * Representation of a local time without timezone.
@@ -36,6 +37,35 @@ export class LocalTime implements LocalTimeLike {
 		this.minute = minute;
 		this.second = second;
 		this.milliOfSecond = milliOfSecond;
+	}
+
+	/**
+	 * Get if this local time equals another local time like object.
+	 *
+	 * @param other
+	 */
+	public equals(other: LocalTimeLike | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this local date with another local date like object.
+	 *
+	 * @param other
+	 */
+	public compare(other: LocalTimeLike) {
+		const h = compareInt(this.hour, other.hour);
+		if(h !== 0) return h;
+
+		const m = compareInt(this.minute, other.minute);
+		if(m !== 0) return m;
+
+		const s = compareInt(this.second, other.second);
+		if(s !== 0) return s;
+
+		return compareInt(this.milliOfSecond, other.milliOfSecond);
 	}
 
 	/**

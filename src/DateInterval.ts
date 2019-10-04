@@ -1,4 +1,5 @@
 import { LocalDate } from './LocalDate';
+import { compareNullable } from './helpers/compareNullable';
 
 /**
  * Representation of an interval between two dates, where both dates are
@@ -18,6 +19,29 @@ export class DateInterval {
 	private constructor(start: LocalDate | null, end: LocalDate | null) {
 		this.start = start;
 		this.end = end;
+	}
+
+	/**
+	 * Get if this interval equals another interval.
+	 *
+	 * @param other
+	 */
+	public equals(other: DateInterval | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this interval with another interval;
+	 *
+	 * @param other
+	 */
+	public compare(other: DateInterval) {
+		const s = compareNullable(this.start, other.start);
+		if(s !== 0) return s;
+
+		return compareNullable(this.end, other.end);
 	}
 
 	/**

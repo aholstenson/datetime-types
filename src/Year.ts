@@ -1,6 +1,7 @@
 import { WithYear } from './types';
 import { zeroPadInt } from './helpers/zeroPadInt';
 import { assertInt } from './helpers/assertInt';
+import { compareInt } from './helpers/compareInt';
 
 /**
  * Representation of a single year.
@@ -13,6 +14,26 @@ export class Year implements WithYear {
 
 	private constructor(year: number) {
 		this.year = year;
+	}
+
+	/**
+	 * Get if this year equals another year like object.
+	 *
+	 * @param other
+	 */
+	public equals(other: WithYear | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this year with another year like object.
+	 *
+	 * @param other
+	 */
+	public compare(other: WithYear) {
+		return compareInt(this.year, other.year);
 	}
 
 	/**

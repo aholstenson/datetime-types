@@ -4,6 +4,7 @@ import { assertInt } from './helpers/assertInt';
 
 import { Month } from './Month';
 import { zeroPadInt } from './helpers/zeroPadInt';
+import { compareInt } from './helpers/compareInt';
 
 /**
  * Local date that represents just a date.
@@ -28,6 +29,32 @@ export class LocalDate implements LocalDateLike {
 		this.year = year;
 		this.month = month;
 		this.dayOfMonth = dayOfMonth;
+	}
+
+	/**
+	 * Get if this local date equals another local date like object.
+	 *
+	 * @param other
+	 */
+	public equals(other: LocalDateLike | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this local date with another local date like object.
+	 *
+	 * @param other
+	 */
+	public compare(other: LocalDateLike) {
+		const y = compareInt(this.year, other.year);
+		if(y !== 0) return y;
+
+		const m = compareInt(this.month, other.month);
+		if(m !== 0) return m;
+
+		return compareInt(this.dayOfMonth, other.dayOfMonth);
 	}
 
 	/**
