@@ -68,4 +68,16 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		const localTime = time instanceof LocalTime ? time : LocalTime.from(time);
 		return new LocalDateTime(localDate, localTime);
 	}
+
+	/**
+	 * Create a new local date time from the specified Date object.
+	 *
+	 * @param date
+	 */
+	public static fromDate(date: Date) {
+		return this.fromDateAndTime(
+			LocalDate.fromDate(date),
+			LocalTime.fromDate(date)
+		);
+	}
 }
