@@ -1,4 +1,5 @@
 import { WithYear } from './types';
+import { assertInt } from './helpers/assertInt';
 /**
  * Representation of a single year.
  */
@@ -18,6 +19,8 @@ export class Year implements WithYear {
 	 * @param year
 	 */
 	public static of(year: number) {
+		year = assertInt(year);
+
 		return new Year(year);
 	}
 }
