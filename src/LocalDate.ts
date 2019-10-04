@@ -17,7 +17,7 @@ export class LocalDate implements LocalDateLike {
 	/**
 	 * The month of the date.
 	 */
-	public readonly month: Month;
+	public readonly month: number;
 
 	/**
 	 * The day of the month.
@@ -73,7 +73,12 @@ export class LocalDate implements LocalDateLike {
 		dayOfMonth: number
 	): LocalDate {
 		year = assertInt(year);
+
+		if(month instanceof Month) {
+			month = month.month;
+		}
 		month = assertInt(month);
+
 		dayOfMonth = assertInt(dayOfMonth);
 
 		if(month < 1 || month > 12) {
