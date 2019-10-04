@@ -1,6 +1,9 @@
 import { WithYear, WithMonth, WithDayOfMonth } from './types';
 
+import { assertInt } from './helpers/assertInt';
+
 import { Month } from './Month';
+import { zeroPadInt } from './helpers/zeroPadInt';
 
 /**
  * Local date that represents just a date.
@@ -28,6 +31,32 @@ export class LocalDate implements WithYear, WithMonth, WithDayOfMonth {
 	}
 
 	/**
+	 * Turn this object into a Date-object.
+	 */
+	public toDateAtMidnight() {
+		return new Date(this.year, this.month - 1, this.dayOfMonth, 0, 0, 0, 0);
+	}
+
+	/**
+	 * Turn this date into a standard string representation.
+	 */
+	public toString() {
+		let result = '';
+		if(this.year < 0) {
+			result += '-' + zeroPadInt(Math.abs(this.year), 4);
+		} else if(this.year > 9999) {
+			result += '+' + zeroPadInt(this.year, 4);
+		} else {
+			result += zeroPadInt(this.year, 4);
+		}
+
+		result += '-' + zeroPadInt(this.month, 2);
+		result += '-' + zeroPadInt(this.dayOfMonth, 2);
+		return result;
+	}
+
+
+	/**
 	 * Create a local date using the given year, month and day. Will throw an
 	 * error if the date is invalid.
 	 *
@@ -39,21 +68,13 @@ export class LocalDate implements WithYear, WithMonth, WithDayOfMonth {
 	 *   the day of the month
 	 */
 	public static of(
-		year: WithYear | number,
-		month: WithMonth | Month | number,
-		dayOfMonth: WithDayOfMonth | number
+		year: number,
+		month: Month | number,
+		dayOfMonth: number
 	): LocalDate {
-		if(typeof year !== 'number') {
-			year = year.year;
-		}
-
-		if(typeof month !== 'number') {
-			month = month.month;
-		}
-
-		if(typeof dayOfMonth !== 'number') {
-			dayOfMonth = dayOfMonth.dayOfMonth;
-		}
+		year = assertInt(year);
+		month = assertInt(month);
+		dayOfMonth = assertInt(dayOfMonth);
 
 		if(month < 1 || month > 12) {
 			throw new Error('month must be between 1 and 12');
@@ -93,10 +114,17 @@ export class LocalDate implements WithYear, WithMonth, WithDayOfMonth {
 	}
 
 	/**
-	 * Turn this object into a Date-object.
+	 * Create a local time from an object containing numeric `year`, `month`
+	 * and `dayOfMonth` properties.
+	 *
+	 * @param object
 	 */
-	public toDate() {
-		return new Date(this.year, this.month - 1, this.dayOfMonth);
+	public static from(object: WithYear & WithMonth & WithDayOfMonth) {
+		return this.of(
+			object.year,
+			object.month,
+			object.dayOfMonth
+		);
 	}
 }
 
