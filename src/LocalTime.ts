@@ -132,15 +132,15 @@ export class LocalTime implements LocalTimeLike {
 	/**
 	 * The minimum time that can be represented.
 	 */
-	public static MIN = new LocalTime(0, 0, 0, 0);
+	public static readonly MIN = new LocalTime(0, 0, 0, 0);
 
 	/**
 	 * The maximum time that can be represented.
 	 */
-	public static MAX = new LocalTime(23, 59, 59, 999);
+	public static readonly MAX = new LocalTime(23, 59, 59, 999);
 
 	/**
 	 * Time at midnight.
 	 */
-	public static MIDNIGHT = new LocalTime(0, 0, 0, 0);
+	public static readonly MIDNIGHT = new LocalTime(0, 0, 0, 0);
 }
