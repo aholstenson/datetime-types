@@ -1,5 +1,7 @@
 import { WithYear } from './types';
+import { zeroPadInt } from './helpers/zeroPadInt';
 import { assertInt } from './helpers/assertInt';
+
 /**
  * Representation of a single year.
  */
@@ -11,6 +13,17 @@ export class Year implements WithYear {
 
 	private constructor(year: number) {
 		this.year = year;
+	}
+
+	/**
+	 * Turn this year into a string.
+	 */
+	public toString() {
+		if(this.year > 9999) {
+			return '+' + this.year;
+		} else {
+			return zeroPadInt(this.year, 4);
+		}
 	}
 
 	/**
