@@ -116,6 +116,20 @@ export class LocalTime implements LocalTimeLike {
 	}
 
 	/**
+	 * Create a local time from the given date.
+	 *
+	 * @param date
+	 */
+	public static fromDate(date: Date) {
+		return new LocalTime(
+			date.getHours(),
+			date.getMinutes(),
+			date.getSeconds(),
+			date.getMilliseconds()
+		);
+	}
+
+	/**
 	 * Get the current time as a local time.
 	 */
 	public static now(): LocalTime {
