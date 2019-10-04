@@ -121,7 +121,7 @@ export class LocalTime implements LocalTimeLike {
 	 * @param date
 	 */
 	public static fromDate(date: Date) {
-		return new LocalTime(
+		return this.of(
 			date.getHours(),
 			date.getMinutes(),
 			date.getSeconds(),
@@ -146,15 +146,15 @@ export class LocalTime implements LocalTimeLike {
 	/**
 	 * The minimum time that can be represented.
 	 */
-	public static readonly MIN = new LocalTime(0, 0, 0, 0);
+	public static readonly Minimum = new LocalTime(0, 0, 0, 0);
 
 	/**
 	 * The maximum time that can be represented.
 	 */
-	public static readonly MAX = new LocalTime(23, 59, 59, 999);
+	public static readonly Maximum = new LocalTime(23, 59, 59, 999);
 
 	/**
 	 * Time at midnight.
 	 */
-	public static readonly MIDNIGHT = new LocalTime(0, 0, 0, 0);
+	public static readonly Midnight = new LocalTime(0, 0, 0, 0);
 }
