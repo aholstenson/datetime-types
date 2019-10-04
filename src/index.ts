@@ -9,3 +9,4 @@ export * from './LocalTime';
 export * from './LocalDateTime';
 
 export * from './Interval';
+export * from './DateInterval';
