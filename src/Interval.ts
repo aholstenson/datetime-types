@@ -23,7 +23,7 @@ export class Interval<T> {
 	 * @param startInclusive
 	 * @param endExclusive
 	 */
-	public static between<T>(startInclusive: T, endExclusive: T) {
+	public static between<T>(startInclusive: T | null, endExclusive: T | null) {
 		return new Interval(startInclusive, endExclusive);
 	}
 
