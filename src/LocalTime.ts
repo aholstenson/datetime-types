@@ -1,11 +1,11 @@
-import { WithHour, WithMinute, WithSecond, WithMilliOfSecond } from './types';
+import { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike } from './types';
 
 import { assertInt } from './helpers/assertInt';
 
 /**
  * Representation of a local time without timezone.
  */
-export class LocalTime implements WithHour, WithMinute, WithSecond, WithMilliOfSecond {
+export class LocalTime implements LocalTimeLike {
 	/**
 	 * The hour of the time.
 	 */

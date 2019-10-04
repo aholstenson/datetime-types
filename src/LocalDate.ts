@@ -1,4 +1,4 @@
-import { WithYear, WithMonth, WithDayOfMonth } from './types';
+import { LocalDateLike } from './types';
 
 import { assertInt } from './helpers/assertInt';
 
@@ -8,7 +8,7 @@ import { zeroPadInt } from './helpers/zeroPadInt';
 /**
  * Local date that represents just a date.
  */
-export class LocalDate implements WithYear, WithMonth, WithDayOfMonth {
+export class LocalDate implements LocalDateLike {
 	/**
 	 * The year of the date.
 	 */
@@ -119,7 +119,7 @@ export class LocalDate implements WithYear, WithMonth, WithDayOfMonth {
 	 *
 	 * @param object
 	 */
-	public static from(object: WithYear & WithMonth & WithDayOfMonth) {
+	public static from(object: LocalDateLike) {
 		return this.of(
 			object.year,
 			object.month,
