@@ -5,9 +5,13 @@ for JavaScript and TypeScript. These types help carry the intent of a value,
 instead of representing everything as a `Date`.
 
 ```javascript
-import { LocalDate } from 'datetime-types';
+import { LocalDate, LocalTime } from 'datetime-types';
 
 const date = LocalDate.of(2042, 10, 2);
+const time = LocalTime.from({
+  hour: 12,
+  minute: 45
+});
 ```
 
 ## Status and features
@@ -23,4 +27,5 @@ Types implemented:
 * `DayOfWeek` enumeration
 * `Month` enumeration
 * `Year` for representing a single year
-* `Interval<Type>` for representing an interval between two time values
+* `DateInterval` for representing an interval between two dates
+
