@@ -1,7 +1,8 @@
+import { WithYear } from './types';
 /**
  * Representation of a single year.
  */
-export class Year {
+export class Year implements WithYear {
 	/**
 	 * The year represented.
 	 */
