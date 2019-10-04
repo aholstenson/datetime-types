@@ -1,7 +1,9 @@
+import { WithMonth } from './types';
+
 /**
  * Representation of a month.
  */
-export class Month {
+export class Month implements WithMonth {
 	public readonly month: number;
 
 	private constructor(month: number) {
