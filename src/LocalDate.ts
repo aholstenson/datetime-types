@@ -1,7 +1,6 @@
+import { WithYear, WithMonth, WithDayOfMonth } from './types';
+
 import { Month } from './Month';
-import { WithYear } from './WithYear';
-import { WithMonth } from './WithMonth';
-import { WithDayOfMonth } from './WithDayOfMonth';
 
 /**
  * Local date that represents just a date.
