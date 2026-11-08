@@ -62,7 +62,11 @@ export class LocalDate implements LocalDateLike {
 	 * Turn this object into a Date-object.
 	 */
 	public toDateAtMidnight() {
-		return new Date(this.year, this.month - 1, this.dayOfMonth, 0, 0, 0, 0);
+		const date = new Date(2000, 0, 1, 0, 0, 0, 0);
+		// The Date constructor reads years 0 to 99 as 1900 to 1999, so set the
+		// full year separately.
+		date.setFullYear(this.year, this.month - 1, this.dayOfMonth);
+		return date;
 	}
 
 	/**

@@ -117,6 +117,14 @@ describe('LocalDate conversion', () => {
 		expect(date.getHours()).toEqual(0);
 		expect(date.getMinutes()).toEqual(0);
 	});
+
+	it.each([ 0, 50, 99, -10 ])('toDateAtMidnight() keeps the year %s', year => {
+		const date = LocalDate.of(year, 3, 1).toDateAtMidnight();
+		expect(date.getFullYear()).toEqual(year);
+		expect(date.getMonth()).toEqual(2);
+		expect(date.getDate()).toEqual(1);
+		expect(LocalDate.fromDate(date).equals(LocalDate.of(year, 3, 1))).toBe(true);
+	});
 });
 
 describe('LocalDate comparison', () => {
