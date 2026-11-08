@@ -99,28 +99,31 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	}
 
 	/**
-	 * Get if this date and time equals another object with date and time
-	 * properties.
+	 * Get if this date and time equals another value. The other value can be anything
+	 * that `from()` accepts. `null` and `undefined` give `false`.
 	 *
 	 * @param other
 	 */
-	public equals(other: (LocalDateLike & LocalTimeLike) | null | undefined) {
-		if(! other) return false;
+	public equals(other: string | LocalDateTimeInput | null | undefined): boolean {
+		if(other === null || other === undefined) return false;
 
 		return this.compare(other) === 0;
 	}
 
 	/**
-	 * Compare this date and time with another object with date and time
-	 * properties. The date is compared first and then the time.
+	 * Compare this date and time with another value. The other value can be anything
+	 * that `from()` accepts. Returns `-1` if this date and time comes first, `0` if
+	 * they are equal and `1` if this date and time comes last.
+	 * The date is compared first and then the time.
 	 *
 	 * @param other
 	 */
-	public compare(other: LocalDateLike & LocalTimeLike) {
-		const d = this.date.compare(other);
+	public compare(other: string | LocalDateTimeInput): -1 | 0 | 1 {
+		const o = LocalDateTime.from(other);
+		const d = this.date.compare(o.date);
 		if(d !== 0) return d;
 
-		return this.time.compare(other);
+		return this.time.compare(o.time);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 import type { LocalDateLike } from './LocalDateLike.js';
 import type { LocalTimeLike } from './LocalTimeLike.js';
+import type { WithMonth } from './WithMonth.js';
+import type { WithYear } from './WithYear.js';
 
 /**
  * Optional calendar of an object. `Temporal` values have this property.
@@ -40,3 +42,15 @@ export type LocalDateTimeInput = LocalDateLike
 	& Partial<LocalTimeLike>
 	& CalendarFields
 	& SubMillisecondFields;
+
+/**
+ * Object that `Year.from()` accepts, such as `{ year }`, a `LocalDate` or a
+ * `Temporal.PlainYearMonth`.
+ */
+export type YearInput = WithYear & CalendarFields;
+
+/**
+ * Object that `Month.from()` accepts, such as `{ month }`, a `LocalDate` or a
+ * `Temporal.PlainDate`.
+ */
+export type MonthInput = WithMonth & CalendarFields;

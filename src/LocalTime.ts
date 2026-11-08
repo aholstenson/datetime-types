@@ -44,32 +44,40 @@ export class LocalTime implements LocalTimeLike {
 	}
 
 	/**
-	 * Get if this local time equals another local time like object.
+	 * Get if this time equals another value. The other value can be anything
+	 * that `from()` accepts. `null` and `undefined` give `false`.
 	 *
 	 * @param other
 	 */
-	public equals(other: LocalTimeLike | null | undefined) {
-		if(! other) return false;
+	public equals(other: string | LocalTimeInput | null | undefined): boolean {
+		if(other === null || other === undefined) return false;
 
 		return this.compare(other) === 0;
 	}
 
 	/**
-	 * Compare this local date with another local date like object.
+	 * Compare this time with another value. The other value can be anything
+	 * that `from()` accepts. Returns `-1` if this time comes first, `0` if
+	 * they are equal and `1` if this time comes last.
+	 *
+	 * Only the time is compared, so a `LocalDateTime` with the same time is
+	 * equal to this time.
 	 *
 	 * @param other
 	 */
-	public compare(other: LocalTimeLike) {
-		const h = compareInt(this.hour, other.hour);
+	public compare(other: string | LocalTimeInput): -1 | 0 | 1 {
+		const o = LocalTime.from(other);
+
+		const h = compareInt(this.hour, o.hour);
 		if(h !== 0) return h;
 
-		const m = compareInt(this.minute, other.minute);
+		const m = compareInt(this.minute, o.minute);
 		if(m !== 0) return m;
 
-		const s = compareInt(this.second, other.second);
+		const s = compareInt(this.second, o.second);
 		if(s !== 0) return s;
 
-		return compareInt(this.millisecond, other.millisecond);
+		return compareInt(this.millisecond, o.millisecond);
 	}
 
 	/**

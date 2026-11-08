@@ -1,4 +1,4 @@
-import type { CalendarFields, WithMonth } from './types/index.js';
+import type { MonthInput, WithMonth } from './types/index.js';
 import { assertIntInRange } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
@@ -17,23 +17,27 @@ export class Month implements WithMonth {
 	}
 
 	/**
-	 * Get if this month equals another month like object.
+	 * Get if this month equals another value. The other value can be anything
+	 * that `from()` accepts. `null` and `undefined` give `false`.
 	 *
 	 * @param other
 	 */
-	public equals(other: WithMonth | null | undefined) {
-		if(! other) return false;
+	public equals(other: string | MonthInput | null | undefined): boolean {
+		if(other === null || other === undefined) return false;
 
 		return this.compare(other) === 0;
 	}
 
 	/**
-	 * Compare this month with another month like object.
+	 * Compare this month with another value. The other value can be anything
+	 * that `from()` accepts. Returns `-1` if this month comes first, `0` if
+	 * they are equal and `1` if this month comes last.
 	 *
 	 * @param other
 	 */
-	public compare(other: WithMonth) {
-		return compareInt(this.month, other.month);
+	public compare(other: string | MonthInput): -1 | 0 | 1 {
+		const o = Month.from(other);
+		return compareInt(this.month, o.month);
 	}
 
 	/**
@@ -83,7 +87,7 @@ export class Month implements WithMonth {
 	 * @param value
 	 *   the string or the object
 	 */
-	public static from(value: string | (WithMonth & CalendarFields)): Month {
+	public static from(value: string | MonthInput): Month {
 		if(typeof value === 'string') {
 			return Month.of(parseMonth(value));
 		}
@@ -107,8 +111,8 @@ export class Month implements WithMonth {
 	 *   a month, or a value that `from()` accepts
 	 */
 	public static compare(
-		a: string | (WithMonth & CalendarFields),
-		b: string | (WithMonth & CalendarFields)
+		a: string | MonthInput,
+		b: string | MonthInput
 	): -1 | 0 | 1 {
 		return Month.from(a).compare(Month.from(b));
 	}

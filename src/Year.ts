@@ -1,4 +1,4 @@
-import type { CalendarFields, WithYear } from './types/index.js';
+import type { WithYear, YearInput } from './types/index.js';
 import { formatYear } from './helpers/formatYear.js';
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
@@ -35,23 +35,27 @@ export class Year implements WithYear {
 	}
 
 	/**
-	 * Get if this year equals another year like object.
+	 * Get if this year equals another value. The other value can be anything
+	 * that `from()` accepts. `null` and `undefined` give `false`.
 	 *
 	 * @param other
 	 */
-	public equals(other: WithYear | null | undefined) {
-		if(! other) return false;
+	public equals(other: string | YearInput | null | undefined): boolean {
+		if(other === null || other === undefined) return false;
 
 		return this.compare(other) === 0;
 	}
 
 	/**
-	 * Compare this year with another year like object.
+	 * Compare this year with another value. The other value can be anything
+	 * that `from()` accepts. Returns `-1` if this year comes first, `0` if
+	 * they are equal and `1` if this year comes last.
 	 *
 	 * @param other
 	 */
-	public compare(other: WithYear) {
-		return compareInt(this.year, other.year);
+	public compare(other: string | YearInput): -1 | 0 | 1 {
+		const o = Year.from(other);
+		return compareInt(this.year, o.year);
 	}
 
 	/**
@@ -102,7 +106,7 @@ export class Year implements WithYear {
 	 * @param value
 	 *   the string or the object
 	 */
-	public static from(value: string | (WithYear & CalendarFields)): Year {
+	public static from(value: string | YearInput): Year {
 		if(typeof value === 'string') {
 			return Year.of(parseYear(value));
 		}
@@ -126,8 +130,8 @@ export class Year implements WithYear {
 	 *   a year, or a value that `from()` accepts
 	 */
 	public static compare(
-		a: string | (WithYear & CalendarFields),
-		b: string | (WithYear & CalendarFields)
+		a: string | YearInput,
+		b: string | YearInput
 	): -1 | 0 | 1 {
 		return Year.from(a).compare(Year.from(b));
 	}

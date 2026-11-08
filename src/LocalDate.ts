@@ -93,29 +93,37 @@ export class LocalDate implements LocalDateLike {
 	}
 
 	/**
-	 * Get if this local date equals another local date like object.
+	 * Get if this date equals another value. The other value can be anything
+	 * that `from()` accepts. `null` and `undefined` give `false`.
 	 *
 	 * @param other
 	 */
-	public equals(other: LocalDateLike | null | undefined) {
-		if(! other) return false;
+	public equals(other: string | LocalDateInput | null | undefined): boolean {
+		if(other === null || other === undefined) return false;
 
 		return this.compare(other) === 0;
 	}
 
 	/**
-	 * Compare this local date with another local date like object.
+	 * Compare this date with another value. The other value can be anything
+	 * that `from()` accepts. Returns `-1` if this date comes first, `0` if
+	 * they are equal and `1` if this date comes last.
+	 *
+	 * Only the date is compared, so a `LocalDateTime` on the same date is
+	 * equal to this date.
 	 *
 	 * @param other
 	 */
-	public compare(other: LocalDateLike) {
-		const y = compareInt(this.year, other.year);
+	public compare(other: string | LocalDateInput): -1 | 0 | 1 {
+		const o = LocalDate.from(other);
+
+		const y = compareInt(this.year, o.year);
 		if(y !== 0) return y;
 
-		const m = compareInt(this.month, other.month);
+		const m = compareInt(this.month, o.month);
 		if(m !== 0) return m;
 
-		return compareInt(this.day, other.day);
+		return compareInt(this.day, o.day);
 	}
 
 	/**

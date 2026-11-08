@@ -125,7 +125,16 @@ const b = LocalDate.of(2024, 3, 2);
 
 a.compare(b); // -1
 a.equals(b); // false
+a.equals('2024-03-01'); // true
 JSON.stringify({ a }); // '{"a":"2024-03-01"}'
+```
+
+`compare()` and `equals()` accept all values that `from()` accepts, such as
+strings and `Temporal` values. A `LocalDate` compares only the date, so it
+equals a `LocalDateTime` on the same date, as in `Temporal`:
+
+```javascript
+LocalDate.of(2024, 3, 1).equals(LocalDateTime.of(2024, 3, 1, 8)); // true
 ```
 
 ## Intervals
