@@ -27,8 +27,8 @@ load it. Node 22.12 and later can also load it with `require`.
 
 ## Status and features
 
-This is currently an early release with only a few types without much ability
-to manipulate values.
+This is an early release. The API follows `Temporal` where it can, so that
+code can move to `Temporal` later.
 
 Types implemented:
 
@@ -103,6 +103,36 @@ const date = LocalDate.of(2024, 3, 3);
 date.dayOfWeek === DayOfWeek.SUNDAY; // true
 date.toLocalDateTime('08:30').toString(); // '2024-03-03T08:30:00'
 date.toLocalDateTime().toLocalTime().toString(); // '00:00:00'
+```
+
+## Changing values
+
+The values do not change. `with()`, `add()` and `subtract()` give a new
+value. They use the same rules as `Temporal`:
+
+```javascript
+import { LocalDate, LocalDateTime, LocalTime } from 'datetime-types';
+
+const date = LocalDate.of(2024, 1, 31);
+
+date.with({ day: 1 }).toString(); // '2024-01-01'
+date.add({ months: 1 }).toString(); // '2024-02-29'
+date.subtract('P1W').toString(); // '2024-01-24'
+LocalTime.of(23).add({ hours: 2 }).toString(); // '01:00:00'
+LocalDateTime.of(2024, 1, 31, 23).add({ hours: 2 }).toString(); // '2024-02-01T01:00:00'
+```
+
+A day that is not in the month, such as 31 February, becomes the last day of
+the month. Use `{ overflow: 'reject' }` to get a `RangeError` instead.
+`of()` and `from()` always throw for such a day.
+
+`until()` and `since()` give the `Duration` between two values. A date gives
+days and a time gives hours, unless `largestUnit` is set:
+
+```javascript
+date.until('2024-03-01').toString(); // 'P30D'
+date.until('2024-03-01', { largestUnit: 'months' }).toString(); // 'P1M1D'
+LocalTime.of(8).until('09:30', { largestUnit: 'minutes' }).toString(); // 'PT90M'
 ```
 
 ## Strings, JSON and comparison

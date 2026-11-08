@@ -12,3 +12,4 @@ export type * from './DurationLike.js';
 
 export type * from './Comparable.js';
 export type * from './inputs.js';
+export type * from './options.js';

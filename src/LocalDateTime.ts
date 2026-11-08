@@ -1,4 +1,11 @@
-import type { LocalDateInput, LocalDateLike, LocalDateTimeInput, LocalTimeInput, LocalTimeLike } from './types/index.js';
+import type {
+	DurationInput,
+	LocalDateInput,
+	LocalDateLike,
+	LocalDateTimeInput,
+	LocalTimeInput,
+	LocalTimeLike
+} from './types/index.js';
 
 import type { DayOfWeek } from './DayOfWeek.js';
 import type { Month } from './Month.js';
@@ -7,6 +14,28 @@ import { LocalDate } from './LocalDate.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseDateTime } from './helpers/parse.js';
 import { assertIsoCalendar, assertMillisecondPrecision } from './helpers/assertFields.js';
+
+import { Duration } from './Duration.js';
+import {
+	addToDate,
+	assertHasSomeField,
+	balanceTime,
+	compareDates,
+	DATE_UNITS,
+	dateUntil,
+	durationTimeToMilliseconds,
+	floorDiv,
+	isDateUnit,
+	largestUnitOf,
+	MILLISECONDS_PER_DAY,
+	overflowOf,
+	regulateDate,
+	regulateTime,
+	TIME_UNITS,
+	timeFromMilliseconds,
+	timeToMilliseconds
+} from './helpers/arithmetic.js';
+import type { DateUnit, DifferenceOptions, OverflowOptions, TimeUnit } from './types/index.js';
 
 /**
  * Representation of a date and time without a timezone.
@@ -134,6 +163,131 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		const date = this.date.toDateAtMidnight();
 		date.setHours(this.hour, this.minute, this.second, this.millisecond);
 		return date;
+	}
+
+	/**
+	 * Get a copy of this date and time with some fields changed, such as
+	 * `value.with({ hour: 0, minute: 0 })`. See `with()` on `LocalDate` and
+	 * `LocalTime` for how values out of range are changed.
+	 *
+	 * @param fields
+	 *   the fields to change. At least one is necessary.
+	 * @param options
+	 */
+	public with(
+		fields: Partial<LocalDateLike & LocalTimeLike>,
+		options?: OverflowOptions
+	): LocalDateTime {
+		assertHasSomeField(fields, [ 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond' ]);
+		const overflow = overflowOf(options);
+		const date = regulateDate({
+			year: fields.year ?? this.year,
+			month: fields.month ?? this.month,
+			day: fields.day ?? this.day
+		}, overflow);
+		const time = regulateTime({
+			hour: fields.hour ?? this.hour,
+			minute: fields.minute ?? this.minute,
+			second: fields.second ?? this.second,
+			millisecond: fields.millisecond ?? this.millisecond
+		}, overflow);
+		return LocalDateTime.of(
+			date.year, date.month, date.day,
+			time.hour, time.minute, time.second, time.millisecond
+		);
+	}
+
+	/**
+	 * Add a duration to this date and time, such as
+	 * `value.add({ hours: 36 })`.
+	 *
+	 * The time units are added first, and a result past midnight moves the
+	 * date. Then the date units are added as `LocalDate.add()` does.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 * @param options
+	 */
+	public add(duration: string | DurationInput, options?: OverflowOptions): LocalDateTime {
+		const d = Duration.from(duration);
+		const overflow = overflowOf(options);
+		const milliseconds = timeToMilliseconds(this) + durationTimeToMilliseconds(d);
+		const extraDays = floorDiv(milliseconds, MILLISECONDS_PER_DAY);
+		const time = timeFromMilliseconds(milliseconds - extraDays * MILLISECONDS_PER_DAY);
+		const date = addToDate(this, {
+			years: d.years,
+			months: d.months,
+			weeks: d.weeks,
+			days: d.days + extraDays
+		}, overflow);
+		return LocalDateTime.of(
+			date.year, date.month, date.day,
+			time.hour, time.minute, time.second, time.millisecond
+		);
+	}
+
+	/**
+	 * Subtract a duration from this date and time. This is the same as adding
+	 * the negated duration.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 * @param options
+	 */
+	public subtract(duration: string | DurationInput, options?: OverflowOptions): LocalDateTime {
+		return this.add(Duration.from(duration).negated(), options);
+	}
+
+	/**
+	 * Get the duration from this date and time until another date and time.
+	 * The result is negative if the other value is before this value.
+	 *
+	 * The result has days and no larger units. Use `largestUnit` to get a
+	 * larger unit, such as `months`, or a smaller unit, such as `hours`.
+	 *
+	 * @param other
+	 *   the other value, or a value that `from()` accepts
+	 * @param options
+	 */
+	public until(
+		other: string | LocalDateTimeInput,
+		options?: DifferenceOptions<DateUnit | TimeUnit>
+	): Duration {
+		const unit = largestUnitOf<DateUnit | TimeUnit>(options, [ ...DATE_UNITS, ...TIME_UNITS ], 'days');
+		const o = LocalDateTime.from(other);
+
+		// If the time goes the other way from the date, use one day less and
+		// add that day to the time.
+		let milliseconds = timeToMilliseconds(o) - timeToMilliseconds(this);
+		const timeSign = Math.sign(milliseconds);
+		let endDate: LocalDateLike = o;
+		if(timeSign !== 0 && timeSign === compareDates(this, o)) {
+			endDate = addToDate(o, { years: 0, months: 0, weeks: 0, days: timeSign }, 'constrain');
+			milliseconds -= timeSign * MILLISECONDS_PER_DAY;
+		}
+
+		const date = dateUntil(this, endDate, isDateUnit(unit) ? unit : 'days');
+		if(isDateUnit(unit)) {
+			return Duration.from({ ...date, ...balanceTime(milliseconds, 'hours') });
+		}
+
+		milliseconds += date.days * MILLISECONDS_PER_DAY;
+		return Duration.from(balanceTime(milliseconds, unit));
+	}
+
+	/**
+	 * Get the duration from another date and time until this date and time.
+	 * See `until()` for the options.
+	 *
+	 * @param other
+	 *   the other value, or a value that `from()` accepts
+	 * @param options
+	 */
+	public since(
+		other: string | LocalDateTimeInput,
+		options?: DifferenceOptions<DateUnit | TimeUnit>
+	): Duration {
+		return this.until(other, options).negated();
 	}
 
 	/**

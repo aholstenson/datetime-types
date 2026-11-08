@@ -1,4 +1,4 @@
-import type { LocalDateInput, LocalDateLike, LocalTimeInput } from './types/index.js';
+import type { DurationInput, LocalDateInput, LocalDateLike, LocalTimeInput } from './types/index.js';
 
 import { assertInt, assertIntInRange } from './helpers/assertInt.js';
 
@@ -19,6 +19,20 @@ import {
 
 import type { DayOfWeek } from './DayOfWeek.js';
 import { LocalDateTime } from './LocalDateTime.js';
+
+import { Duration } from './Duration.js';
+import {
+	addToDate,
+	assertHasSomeField,
+	DATE_UNITS,
+	dateUntil,
+	durationTimeToMilliseconds,
+	largestUnitOf,
+	MILLISECONDS_PER_DAY,
+	overflowOf,
+	regulateDate
+} from './helpers/arithmetic.js';
+import type { DateUnit, DifferenceOptions, OverflowOptions } from './types/index.js';
 
 /**
  * Local date that represents just a date.
@@ -135,6 +149,92 @@ export class LocalDate implements LocalDateLike {
 		// full year separately.
 		date.setFullYear(this.year, this.month - 1, this.day);
 		return date;
+	}
+
+	/**
+	 * Get a copy of this date with some fields changed, such as
+	 * `date.with({ day: 1 })` for the first day of the month.
+	 *
+	 * A month after 12 becomes 12. A day after the last day of the month
+	 * becomes the last day, unless `overflow` is `reject`.
+	 *
+	 * @param fields
+	 *   the fields to change. At least one is necessary.
+	 * @param options
+	 */
+	public with(fields: Partial<LocalDateLike>, options?: OverflowOptions): LocalDate {
+		assertHasSomeField(fields, [ 'year', 'month', 'day' ]);
+		const date = regulateDate({
+			year: fields.year ?? this.year,
+			month: fields.month ?? this.month,
+			day: fields.day ?? this.day
+		}, overflowOf(options));
+		return LocalDate.of(date.year, date.month, date.day);
+	}
+
+	/**
+	 * Add a duration to this date, such as `date.add({ months: 1 })`.
+	 *
+	 * The years and months are added first. If the day is not in the month
+	 * that results, it becomes the last day of the month, unless `overflow`
+	 * is `reject`. Then the weeks and days are added. Hours and smaller units
+	 * are added as whole days, so 25 hours adds 1 day.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 * @param options
+	 */
+	public add(duration: string | DurationInput, options?: OverflowOptions): LocalDate {
+		const d = Duration.from(duration);
+		const result = addToDate(this, {
+			years: d.years,
+			months: d.months,
+			weeks: d.weeks,
+			days: d.days + Math.trunc(durationTimeToMilliseconds(d) / MILLISECONDS_PER_DAY)
+		}, overflowOf(options));
+		return LocalDate.of(result.year, result.month, result.day);
+	}
+
+	/**
+	 * Subtract a duration from this date. This is the same as adding the
+	 * negated duration.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 * @param options
+	 */
+	public subtract(duration: string | DurationInput, options?: OverflowOptions): LocalDate {
+		return this.add(Duration.from(duration).negated(), options);
+	}
+
+	/**
+	 * Get the duration from this date until another date. The result is
+	 * negative if the other date is before this date.
+	 *
+	 * The result has days and no larger units, unless `largestUnit` is
+	 * `years`, `months` or `weeks`. For example, from 2024-01-31 until
+	 * 2024-03-01 is `P30D`, or `P1M1D` with `largestUnit: 'months'`.
+	 *
+	 * @param other
+	 *   the other date, or a value that `from()` accepts
+	 * @param options
+	 */
+	public until(other: string | LocalDateInput, options?: DifferenceOptions<DateUnit>): Duration {
+		const unit = largestUnitOf(options, DATE_UNITS, 'days');
+		return Duration.from(dateUntil(this, LocalDate.from(other), unit));
+	}
+
+	/**
+	 * Get the duration from another date until this date. The result is
+	 * negative if the other date is after this date. See `until()` for the
+	 * options.
+	 *
+	 * @param other
+	 *   the other date, or a value that `from()` accepts
+	 * @param options
+	 */
+	public since(other: string | LocalDateInput, options?: DifferenceOptions<DateUnit>): Duration {
+		return this.until(other, options).negated();
 	}
 
 	/**

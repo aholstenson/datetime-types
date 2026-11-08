@@ -1,4 +1,4 @@
-import type { LocalTimeInput, LocalTimeLike } from './types/index.js';
+import type { DurationInput, LocalTimeInput, LocalTimeLike } from './types/index.js';
 
 import { assertIntInRange } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
@@ -6,6 +6,22 @@ import { noValueOf } from './helpers/noValueOf.js';
 import { parseTime } from './helpers/parse.js';
 import { assertMillisecondPrecision } from './helpers/assertFields.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
+
+import { Duration } from './Duration.js';
+import {
+	assertHasSomeField,
+	balanceTime,
+	durationTimeToMilliseconds,
+	floorDiv,
+	largestUnitOf,
+	MILLISECONDS_PER_DAY,
+	overflowOf,
+	regulateTime,
+	TIME_UNITS,
+	timeFromMilliseconds,
+	timeToMilliseconds
+} from './helpers/arithmetic.js';
+import type { DifferenceOptions, OverflowOptions, TimeUnit } from './types/index.js';
 
 /**
  * Representation of a local time without timezone.
@@ -78,6 +94,84 @@ export class LocalTime implements LocalTimeLike {
 		if(s !== 0) return s;
 
 		return compareInt(this.millisecond, o.millisecond);
+	}
+
+	/**
+	 * Get a copy of this time with some fields changed, such as
+	 * `time.with({ minute: 0 })`.
+	 *
+	 * A field out of range becomes the nearest valid value, such as hour 25
+	 * becoming 23, unless `overflow` is `reject`.
+	 *
+	 * @param fields
+	 *   the fields to change. At least one is necessary.
+	 * @param options
+	 */
+	public with(fields: Partial<LocalTimeLike>, options?: OverflowOptions): LocalTime {
+		assertHasSomeField(fields, [ 'hour', 'minute', 'second', 'millisecond' ]);
+		const time = regulateTime({
+			hour: fields.hour ?? this.hour,
+			minute: fields.minute ?? this.minute,
+			second: fields.second ?? this.second,
+			millisecond: fields.millisecond ?? this.millisecond
+		}, overflowOf(options));
+		return LocalTime.of(time.hour, time.minute, time.second, time.millisecond);
+	}
+
+	/**
+	 * Add a duration to this time, such as `time.add({ minutes: 30 })`. The
+	 * result goes around midnight, so 23:00 plus 2 hours is 01:00. Days and
+	 * larger units have no effect.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 */
+	public add(duration: string | DurationInput): LocalTime {
+		const milliseconds = timeToMilliseconds(this) + durationTimeToMilliseconds(Duration.from(duration));
+		const time = timeFromMilliseconds(
+			milliseconds - floorDiv(milliseconds, MILLISECONDS_PER_DAY) * MILLISECONDS_PER_DAY
+		);
+		return LocalTime.of(time.hour, time.minute, time.second, time.millisecond);
+	}
+
+	/**
+	 * Subtract a duration from this time. The result goes around midnight,
+	 * so 01:00 minus 2 hours is 23:00.
+	 *
+	 * @param duration
+	 *   the duration, or a value that `Duration.from()` accepts
+	 */
+	public subtract(duration: string | DurationInput): LocalTime {
+		return this.add(Duration.from(duration).negated());
+	}
+
+	/**
+	 * Get the duration from this time until another time on the same day.
+	 * The result is negative if the other time is before this time.
+	 *
+	 * The result has hours and no larger units. Use `largestUnit` to get a
+	 * smaller unit, such as `minutes` for `PT90M` instead of `PT1H30M`.
+	 *
+	 * @param other
+	 *   the other time, or a value that `from()` accepts
+	 * @param options
+	 */
+	public until(other: string | LocalTimeInput, options?: DifferenceOptions<TimeUnit>): Duration {
+		const unit = largestUnitOf(options, TIME_UNITS, 'hours');
+		const milliseconds = timeToMilliseconds(LocalTime.from(other)) - timeToMilliseconds(this);
+		return Duration.from(balanceTime(milliseconds, unit));
+	}
+
+	/**
+	 * Get the duration from another time on the same day until this time.
+	 * See `until()` for the options.
+	 *
+	 * @param other
+	 *   the other time, or a value that `from()` accepts
+	 * @param options
+	 */
+	public since(other: string | LocalTimeInput, options?: DifferenceOptions<TimeUnit>): Duration {
+		return this.until(other, options).negated();
 	}
 
 	/**
