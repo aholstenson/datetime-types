@@ -1,5 +1,11 @@
-import type { DurationInput, DurationLike } from './types/index.js';
+import type {
+	DurationInput,
+	DurationLike,
+	TemporalDuration,
+	TemporalNamespace
+} from './types/index.js';
 
+import { temporalOf } from './helpers/temporal.js';
 import { assertInt } from './helpers/assertInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseDuration } from './helpers/parse.js';
@@ -125,6 +131,31 @@ export class Duration implements DurationLike {
 	public with(fields: Partial<DurationLike>): Duration {
 		assertHasField(fields);
 		return Duration.create(field => fields[field] ?? this[field]);
+	}
+
+	/**
+	 * Convert this value into a `Temporal.Duration`.
+	 *
+	 * Without an argument this uses the global `Temporal`. Give the `Temporal`
+	 * object of a polyfill where there is no global `Temporal`, such as in
+	 * older browsers. Throws a `TypeError` if `Temporal` is not available.
+	 *
+	 * @param temporal
+	 *   the `Temporal` object to use, such as the export of a polyfill
+	 */
+	public toTemporal(): TemporalDuration;
+	public toTemporal<T extends TemporalNamespace<'Duration'>>(temporal: T): T['Duration']['prototype'];
+	public toTemporal(temporal?: TemporalNamespace<'Duration'>): unknown {
+		return temporalOf(temporal).Duration.from({
+			years: this.years,
+			months: this.months,
+			weeks: this.weeks,
+			days: this.days,
+			hours: this.hours,
+			minutes: this.minutes,
+			seconds: this.seconds,
+			milliseconds: this.milliseconds
+		});
 	}
 
 	/**

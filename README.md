@@ -109,6 +109,28 @@ date.toYearMonth().toString(); // '2024-03'
 YearMonth.of(2024, 2).toLocalDate(31).toString(); // '2024-02-29'
 ```
 
+## Converting to Temporal
+
+`toTemporal()` converts a value into the same `Temporal` type:
+`LocalDate` into `Temporal.PlainDate`, `LocalTime` into `Temporal.PlainTime`,
+`LocalDateTime` into `Temporal.PlainDateTime`, `YearMonth` into
+`Temporal.PlainYearMonth` and `Duration` into `Temporal.Duration`.
+
+The library does not need `Temporal` for anything else. Without an argument,
+`toTemporal()` uses the global `Temporal`, and throws a `TypeError` if there
+is none. Where `Temporal` is not available, such as in older browsers, give
+the `Temporal` object of a polyfill:
+
+```javascript
+import { Temporal } from 'temporal-polyfill';
+
+LocalDate.of(2024, 3, 1).toTemporal(Temporal); // Temporal.PlainDate
+```
+
+In TypeScript, the result has the `Temporal` type when the project has types
+for a global `Temporal` or when you give the `Temporal` object. Otherwise the
+result has a type with only the fields.
+
 ## Changing values
 
 The values do not change. `with()`, `add()` and `subtract()` give a new
@@ -149,8 +171,8 @@ and a sign, such as `+020240-01-02`. A time always has the seconds, such as
 
 `JSON.stringify` writes the same string, because every type has `toJSON()`.
 
-The test suite checks the strings, the calendar fields and the order of
-values against the built-in `Temporal` in Node 26 and later.
+The test suite checks the strings, the calendar fields, the arithmetic and
+the order of values against the built-in `Temporal` in Node 26 and later.
 
 The types do not convert to numbers or strings with operators. `a < b` and
 `a + b` throw a `TypeError`, as they do for `Temporal`. Use `compare()` or

@@ -4,9 +4,12 @@ import type {
 	LocalDateLike,
 	LocalDateTimeInput,
 	LocalTimeInput,
-	LocalTimeLike
+	LocalTimeLike,
+	TemporalNamespace,
+	TemporalPlainDateTime
 } from './types/index.js';
 
+import { temporalOf } from './helpers/temporal.js';
 import type { DayOfWeek } from './DayOfWeek.js';
 import type { Month } from './Month.js';
 import { LocalTime } from './LocalTime.js';
@@ -296,6 +299,30 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		options?: DifferenceOptions<DateUnit | TimeUnit>
 	): Duration {
 		return this.until(other, options).negated();
+	}
+
+	/**
+	 * Convert this value into a `Temporal.PlainDateTime`.
+	 *
+	 * Without an argument this uses the global `Temporal`. Give the `Temporal`
+	 * object of a polyfill where there is no global `Temporal`, such as in
+	 * older browsers. Throws a `TypeError` if `Temporal` is not available.
+	 *
+	 * @param temporal
+	 *   the `Temporal` object to use, such as the export of a polyfill
+	 */
+	public toTemporal(): TemporalPlainDateTime;
+	public toTemporal<T extends TemporalNamespace<'PlainDateTime'>>(temporal: T): T['PlainDateTime']['prototype'];
+	public toTemporal(temporal?: TemporalNamespace<'PlainDateTime'>): unknown {
+		return temporalOf(temporal).PlainDateTime.from({
+			year: this.year,
+			month: this.month,
+			day: this.day,
+			hour: this.hour,
+			minute: this.minute,
+			second: this.second,
+			millisecond: this.millisecond
+		});
 	}
 
 	/**

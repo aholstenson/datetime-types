@@ -1,5 +1,12 @@
-import type { DurationInput, LocalTimeInput, LocalTimeLike } from './types/index.js';
+import type {
+	DurationInput,
+	LocalTimeInput,
+	LocalTimeLike,
+	TemporalNamespace,
+	TemporalPlainTime
+} from './types/index.js';
 
+import { temporalOf } from './helpers/temporal.js';
 import { assertIntInRange } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
@@ -172,6 +179,27 @@ export class LocalTime implements LocalTimeLike {
 	 */
 	public since(other: string | LocalTimeInput, options?: DifferenceOptions<TimeUnit>): Duration {
 		return this.until(other, options).negated();
+	}
+
+	/**
+	 * Convert this value into a `Temporal.PlainTime`.
+	 *
+	 * Without an argument this uses the global `Temporal`. Give the `Temporal`
+	 * object of a polyfill where there is no global `Temporal`, such as in
+	 * older browsers. Throws a `TypeError` if `Temporal` is not available.
+	 *
+	 * @param temporal
+	 *   the `Temporal` object to use, such as the export of a polyfill
+	 */
+	public toTemporal(): TemporalPlainTime;
+	public toTemporal<T extends TemporalNamespace<'PlainTime'>>(temporal: T): T['PlainTime']['prototype'];
+	public toTemporal(temporal?: TemporalNamespace<'PlainTime'>): unknown {
+		return temporalOf(temporal).PlainTime.from({
+			hour: this.hour,
+			minute: this.minute,
+			second: this.second,
+			millisecond: this.millisecond
+		});
 	}
 
 	/**

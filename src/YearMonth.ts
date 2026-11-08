@@ -2,12 +2,15 @@ import type {
 	DifferenceOptions,
 	DurationInput,
 	OverflowOptions,
+	TemporalNamespace,
+	TemporalPlainYearMonth,
 	WithMonth,
 	WithYear,
 	YearMonthInput,
 	YearMonthUnit
 } from './types/index.js';
 
+import { temporalOf } from './helpers/temporal.js';
 import { assertInt, assertIntInRange } from './helpers/assertInt.js';
 import { assertIsoCalendar } from './helpers/assertFields.js';
 import { compareInt } from './helpers/compareInt.js';
@@ -186,6 +189,22 @@ export class YearMonth implements WithYear, WithMonth {
 	public compare(other: string | YearMonthInput): -1 | 0 | 1 {
 		const o = YearMonth.from(other);
 		return compareInt(this.year, o.year) || compareInt(this.month, o.month);
+	}
+
+	/**
+	 * Convert this value into a `Temporal.PlainYearMonth`.
+	 *
+	 * Without an argument this uses the global `Temporal`. Give the `Temporal`
+	 * object of a polyfill where there is no global `Temporal`, such as in
+	 * older browsers. Throws a `TypeError` if `Temporal` is not available.
+	 *
+	 * @param temporal
+	 *   the `Temporal` object to use, such as the export of a polyfill
+	 */
+	public toTemporal(): TemporalPlainYearMonth;
+	public toTemporal<T extends TemporalNamespace<'PlainYearMonth'>>(temporal: T): T['PlainYearMonth']['prototype'];
+	public toTemporal(temporal?: TemporalNamespace<'PlainYearMonth'>): unknown {
+		return temporalOf(temporal).PlainYearMonth.from({ year: this.year, month: this.month });
 	}
 
 	/**
