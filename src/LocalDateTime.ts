@@ -16,6 +16,14 @@ import { LocalTime } from './LocalTime.js';
 import { LocalDate } from './LocalDate.js';
 import type { YearMonth } from './YearMonth.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { compareInt } from './helpers/compareInt.js';
+import {
+	dayOfWeek,
+	dayOfYear,
+	daysInMonth,
+	daysInYear,
+	isLeapYear
+} from './helpers/calendar.js';
 import { parseDateTime } from './helpers/parse.js';
 import { assertIsoCalendar, assertMillisecondPrecision } from './helpers/assertFields.js';
 
@@ -45,24 +53,53 @@ import type { DateUnit, DifferenceOptions, OverflowOptions, TimeUnit } from './t
  * Representation of a date and time without a timezone.
  */
 export class LocalDateTime implements LocalDateLike, LocalTimeLike {
-	private readonly date: LocalDate;
-	private readonly time: LocalTime;
+	// The fields are own properties, and not a hidden `LocalDate` and
+	// `LocalTime`, so that a debugger or `console.log` shows all of them
+	// directly.
+
+	/**
+	 * The year.
+	 */
+	public readonly year: number;
+
+	/**
+	 * The month, from 1 to 12.
+	 */
+	public readonly month: number;
+
+	/**
+	 * The day of the month, from 1.
+	 */
+	public readonly day: number;
+
+	/**
+	 * The hour, from 0 to 23.
+	 */
+	public readonly hour: number;
+
+	/**
+	 * The minute, from 0 to 59.
+	 */
+	public readonly minute: number;
+
+	/**
+	 * The second, from 0 to 59.
+	 */
+	public readonly second: number;
+
+	/**
+	 * The millisecond, from 0 to 999.
+	 */
+	public readonly millisecond: number;
 
 	private constructor(date: LocalDate, time: LocalTime) {
-		this.date = date;
-		this.time = time;
-	}
-
-	get year() {
-		return this.date.year;
-	}
-
-	get month() {
-		return this.date.month;
-	}
-
-	get day() {
-		return this.date.day;
+		this.year = date.year;
+		this.month = date.month;
+		this.day = date.day;
+		this.hour = time.hour;
+		this.minute = time.minute;
+		this.second = time.second;
+		this.millisecond = time.millisecond;
 	}
 
 	/**
@@ -70,72 +107,56 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * (7).
 	 */
 	get dayOfWeek(): DayOfWeek {
-		return this.date.dayOfWeek;
+		return dayOfWeek(this.year, this.month, this.day);
 	}
 
 	/**
 	 * The day of the year, from 1 for 1 January.
 	 */
 	get dayOfYear() {
-		return this.date.dayOfYear;
+		return dayOfYear(this.year, this.month, this.day);
 	}
 
 	/**
 	 * The number of days in the month of this date, from 28 to 31.
 	 */
 	get daysInMonth() {
-		return this.date.daysInMonth;
+		return daysInMonth(this.year, this.month);
 	}
 
 	/**
 	 * The number of days in the year of this date, 365 or 366.
 	 */
 	get daysInYear() {
-		return this.date.daysInYear;
+		return daysInYear(this.year);
 	}
 
 	/**
 	 * If the year of this date is a leap year.
 	 */
 	get inLeapYear() {
-		return this.date.inLeapYear;
-	}
-
-	get hour() {
-		return this.time.hour;
-	}
-
-	get minute() {
-		return this.time.minute;
-	}
-
-	get second() {
-		return this.time.second;
-	}
-
-	get millisecond() {
-		return this.time.millisecond;
+		return isLeapYear(this.year);
 	}
 
 	/**
 	 * Get the date part of this date and time.
 	 */
 	public toLocalDate(): LocalDate {
-		return this.date;
+		return LocalDate.of(this.year, this.month, this.day);
 	}
 
 	/**
 	 * Get the year and month of this date and time.
 	 */
 	public toYearMonth(): YearMonth {
-		return this.date.toYearMonth();
+		return this.toLocalDate().toYearMonth();
 	}
 
 	/**
 	 * Get the time part of this date and time.
 	 */
 	public toLocalTime(): LocalTime {
-		return this.time;
+		return LocalTime.of(this.hour, this.minute, this.second, this.millisecond);
 	}
 
 	/**
@@ -160,10 +181,13 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 */
 	public compare(other: string | LocalDateTimeInput): -1 | 0 | 1 {
 		const o = LocalDateTime.from(other);
-		const d = this.date.compare(o.date);
-		if(d !== 0) return d;
-
-		return this.time.compare(o.time);
+		return compareInt(this.year, o.year)
+			|| compareInt(this.month, o.month)
+			|| compareInt(this.day, o.day)
+			|| compareInt(this.hour, o.hour)
+			|| compareInt(this.minute, o.minute)
+			|| compareInt(this.second, o.second)
+			|| compareInt(this.millisecond, o.millisecond);
 	}
 
 	/**
@@ -171,7 +195,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * system.
 	 */
 	public toDate(): Date {
-		const date = this.date.toDateAtMidnight();
+		const date = this.toLocalDate().toDateAtMidnight();
 		date.setHours(this.hour, this.minute, this.second, this.millisecond);
 		return date;
 	}
@@ -345,7 +369,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * `2024-03-01T08:30:00`.
 	 */
 	public toString() {
-		return this.date.toString() + 'T' + this.time.toString();
+		return this.toLocalDate().toString() + 'T' + this.toLocalTime().toString();
 	}
 
 	/**
