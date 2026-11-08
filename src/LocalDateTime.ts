@@ -1,6 +1,7 @@
 import type { LocalDateInput, LocalDateLike, LocalDateTimeInput, LocalTimeInput, LocalTimeLike } from './types/index.js';
 
 import type { DayOfWeek } from './DayOfWeek.js';
+import type { Month } from './Month.js';
 import { LocalTime } from './LocalTime.js';
 import { LocalDate } from './LocalDate.js';
 import { noValueOf } from './helpers/noValueOf.js';
@@ -123,6 +124,16 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	}
 
 	/**
+	 * Turn this date and time into a `Date` in the local timezone of the
+	 * system.
+	 */
+	public toDate(): Date {
+		const date = this.date.toDateAtMidnight();
+		date.setHours(this.hour, this.minute, this.second, this.millisecond);
+		return date;
+	}
+
+	/**
 	 * Get the string for this value in JSON. This is the same as
 	 * `toString()`.
 	 */
@@ -152,7 +163,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * @param year
 	 *   the year
 	 * @param month
-	 *   the month, from 1 to 12
+	 *   the month, from 1 to 12, or a `Month`
 	 * @param day
 	 *   the day of the month, from 1
 	 * @param hour
@@ -166,7 +177,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 */
 	public static of(
 		year: number,
-		month: number,
+		month: Month | number,
 		day: number,
 		hour: number = 0,
 		minute: number = 0,
@@ -258,6 +269,13 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		time: string | LocalTimeInput
 	): LocalDateTime {
 		return new LocalDateTime(LocalDate.from(date), LocalTime.from(time));
+	}
+
+	/**
+	 * Get the current date and time in the local timezone of the system.
+	 */
+	public static now(): LocalDateTime {
+		return LocalDateTime.fromDate(new Date());
 	}
 
 	/**

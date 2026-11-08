@@ -133,6 +133,13 @@ export class Year implements WithYear {
 	}
 
 	/**
+	 * Get the current year in the local timezone of the system.
+	 */
+	public static now(): Year {
+		return Year.fromDate(new Date());
+	}
+
+	/**
 	 * Create a year from the given date.
 	 *
 	 * @param date

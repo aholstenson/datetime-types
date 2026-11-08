@@ -197,6 +197,13 @@ export class LocalDate implements LocalDateLike {
 	}
 
 	/**
+	 * Get the current date in the local timezone of the system.
+	 */
+	public static now(): LocalDate {
+		return LocalDate.fromDate(new Date());
+	}
+
+	/**
 	 * Create a local date from an ISO 8601 string or from an object.
 	 *
 	 * The string can be in the form that `toString()` gives, such as

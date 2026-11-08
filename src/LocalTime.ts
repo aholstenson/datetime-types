@@ -197,17 +197,10 @@ export class LocalTime implements LocalTimeLike {
 	}
 
 	/**
-	 * Get the current time as a local time.
+	 * Get the current time in the local timezone of the system.
 	 */
 	public static now(): LocalTime {
-		const date = new Date();
-
-		return LocalTime.of(
-			date.getHours(),
-			date.getMinutes(),
-			date.getSeconds(),
-			date.getMilliseconds()
-		);
+		return LocalTime.fromDate(new Date());
 	}
 
 	/**

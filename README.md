@@ -63,6 +63,10 @@ LocalDateTime.of(2024, 3, 1, 8, 30);
 LocalDateTime.from('2024-03-01T08:30:00');
 ```
 
+`now()` gives the current value, and `fromDate()` converts a `Date`. Both
+use the local timezone of the system. `LocalDate.toDateAtMidnight()` and
+`LocalDateTime.toDate()` convert back to a `Date`.
+
 The errors are the same kind that `Temporal` throws. A value out of range,
 such as month 13, and a string that can not be read throw a `RangeError`. A
 value that is not a number throws a `TypeError`.
