@@ -1,7 +1,7 @@
-import { WithYear } from './types';
-import { zeroPadInt } from './helpers/zeroPadInt';
-import { assertInt } from './helpers/assertInt';
-import { compareInt } from './helpers/compareInt';
+import type { WithYear } from './types/index.js';
+import { zeroPadInt } from './helpers/zeroPadInt.js';
+import { assertInt } from './helpers/assertInt.js';
+import { compareInt } from './helpers/compareInt.js';
 
 /**
  * Representation of a single year.

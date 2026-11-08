@@ -1,4 +1,4 @@
-import { LocalDate } from '../src/LocalDate';
+import { LocalDate } from '../src/LocalDate.js';
 
 describe('LocalDate', () => {
 	it('of(2004, 8, 4)', () => {
@@ -35,10 +35,7 @@ describe('LocalDate', () => {
 	});
 
 	it('of(2004, 2, 30)', () => {
-		try {
-			LocalDate.of(2004, 2, 30);
-			fail();
-		} catch {}
+		expect(() => LocalDate.of(2004, 2, 30)).toThrow();
 	});
 
 	it('of(201, 12, 2)', () => {

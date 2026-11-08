@@ -1,7 +1,7 @@
-import { LocalDateLike, LocalTimeLike } from './types';
+import type { LocalDateLike, LocalTimeLike } from './types/index.js';
 
-import { LocalTime } from './LocalTime';
-import { LocalDate } from './LocalDate';
+import { LocalTime } from './LocalTime.js';
+import { LocalDate } from './LocalDate.js';
 
 /**
  * Representation of a date and time without a timezone.

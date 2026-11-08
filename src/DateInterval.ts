@@ -1,5 +1,5 @@
-import { LocalDate } from './LocalDate';
-import { compareNullable } from './helpers/compareNullable';
+import { LocalDate } from './LocalDate.js';
+import { compareNullable } from './helpers/compareNullable.js';
 
 /**
  * Representation of an interval between two dates, where both dates are
@@ -50,7 +50,7 @@ export class DateInterval {
 	 * @param startInclusive
 	 * @param endInclusive
 	 */
-	public static between<T>(startInclusive: LocalDate | null, endInclusive: LocalDate | null) {
+	public static between(startInclusive: LocalDate | null, endInclusive: LocalDate | null) {
 		return new DateInterval(startInclusive, endInclusive);
 	}
 
@@ -60,7 +60,7 @@ export class DateInterval {
 	 *
 	 * @param endInclusive
 	 */
-	public static until<T>(endInclusive: LocalDate) {
+	public static until(endInclusive: LocalDate) {
 		return new DateInterval(null, endInclusive);
 	}
 
@@ -70,7 +70,7 @@ export class DateInterval {
 	 *
 	 * @param startInclusive
 	 */
-	public static from<T>(startInclusive: LocalDate) {
+	public static from(startInclusive: LocalDate) {
 		return new DateInterval(startInclusive, null);
 	}
 }

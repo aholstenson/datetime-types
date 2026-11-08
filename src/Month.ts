@@ -1,5 +1,5 @@
-import { WithMonth } from './types';
-import { compareInt } from './helpers/compareInt';
+import type { WithMonth } from './types/index.js';
+import { compareInt } from './helpers/compareInt.js';
 
 /**
  * Representation of a month.

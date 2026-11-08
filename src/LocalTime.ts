@@ -1,7 +1,7 @@
-import { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike } from './types';
+import type { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike } from './types/index.js';
 
-import { assertInt } from './helpers/assertInt';
-import { compareInt } from './helpers/compareInt';
+import { assertInt } from './helpers/assertInt.js';
+import { compareInt } from './helpers/compareInt.js';
 
 /**
  * Representation of a local time without timezone.

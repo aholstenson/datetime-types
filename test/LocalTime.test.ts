@@ -1,4 +1,4 @@
-import { LocalTime } from '../src/LocalTime';
+import { LocalTime } from '../src/LocalTime.js';
 
 describe('LocalTime', () => {
 	it('of(2, 14)', () => {

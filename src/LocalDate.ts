@@ -1,10 +1,10 @@
-import { LocalDateLike } from './types';
+import type { LocalDateLike } from './types/index.js';
 
-import { assertInt } from './helpers/assertInt';
+import { assertInt } from './helpers/assertInt.js';
 
-import { Month } from './Month';
-import { zeroPadInt } from './helpers/zeroPadInt';
-import { compareInt } from './helpers/compareInt';
+import { Month } from './Month.js';
+import { zeroPadInt } from './helpers/zeroPadInt.js';
+import { compareInt } from './helpers/compareInt.js';
 
 /**
  * Local date that represents just a date.

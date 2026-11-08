@@ -1,5 +1,9 @@
 # datetime-types
 
+[![npm version](https://badge.fury.io/js/datetime-types.svg)](https://badge.fury.io/js/datetime-types)
+[![Build Status](https://github.com/aholstenson/datetime-types/actions/workflows/ci.yml/badge.svg)](https://github.com/aholstenson/datetime-types/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/aholstenson/datetime-types/badge.svg)](https://coveralls.io/github/aholstenson/datetime-types)
+
 This library provides immutable dates, times, intervals, periods and durations
 for JavaScript and TypeScript. These types help carry the intent of a value,
 instead of representing everything as a `Date`.
@@ -13,6 +17,13 @@ const time = LocalTime.from({
   minute: 45
 });
 ```
+
+```
+npm install datetime-types
+```
+
+This is an ES module package and it needs Node 22 or later. Use `import` to
+load it. Node 22.12 and later can also load it with `require`.
 
 ## Status and features
 

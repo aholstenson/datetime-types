@@ -1,12 +1,12 @@
-export * from './types';
+export type * from './types/index.js';
 
-export * from './DayOfWeek';
-export * from './Month';
-export * from './Year';
+export * from './DayOfWeek.js';
+export * from './Month.js';
+export * from './Year.js';
 
-export * from './LocalDate';
-export * from './LocalTime';
-export * from './LocalDateTime';
+export * from './LocalDate.js';
+export * from './LocalTime.js';
+export * from './LocalDateTime.js';
 
-export * from './Interval';
-export * from './DateInterval';
+export * from './Interval.js';
+export * from './DateInterval.js';
