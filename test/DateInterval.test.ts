@@ -140,5 +140,22 @@ describe('DateInterval', () => {
 			expect(DateInterval.between(null, null).toString()).toEqual('../..');
 		});
 	});
-});
 
+	describe('inputs', () => {
+		it('between, startingAt and endingAt accept strings and objects', () => {
+			expect(DateInterval.between('2024-03-01', { year: 2024, month: 3, day: 31 }).toString())
+				.toEqual('2024-03-01/2024-03-31');
+			expect(DateInterval.between(null, '2024-03-31').toString()).toEqual('../2024-03-31');
+			expect(DateInterval.startingAt('2024-03-01').toString()).toEqual('2024-03-01/..');
+			expect(DateInterval.endingAt('2024-03-31').toString()).toEqual('../2024-03-31');
+		});
+
+		it('contains accepts a string', () => {
+			expect(DateInterval.from('2024-03-01/2024-03-31').contains('2024-03-31')).toBe(true);
+		});
+
+		it('between throws for a string that is not a date', () => {
+			expect(() => DateInterval.between('2024-02-30', null)).toThrow(RangeError);
+		});
+	});
+});

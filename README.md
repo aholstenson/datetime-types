@@ -144,14 +144,15 @@ end makes that side open, so the interval has no limit on that side. The start
 must not be after the end.
 
 `DateInterval` includes both dates. Use it for date ranges as people write
-them, such as 1 March to 31 March:
+them, such as 1 March to 31 March. Each date can be a `LocalDate` or a value
+that `LocalDate.from()` accepts:
 
 ```javascript
-import { DateInterval, LocalDate } from 'datetime-types';
+import { DateInterval } from 'datetime-types';
 
-const march = DateInterval.between(LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31));
+const march = DateInterval.between('2024-03-01', '2024-03-31');
 
-march.contains(LocalDate.of(2024, 3, 31)); // true
+march.contains('2024-03-31'); // true
 march.toString(); // '2024-03-01/2024-03-31'
 ```
 

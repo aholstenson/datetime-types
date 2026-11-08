@@ -1,4 +1,4 @@
-import type { LocalDateLike } from './types/index.js';
+import type { LocalDateInput } from './types/index.js';
 
 import { LocalDate } from './LocalDate.js';
 import {
@@ -39,8 +39,9 @@ export class DateInterval {
 	 * Get if the given date is in this interval.
 	 *
 	 * @param date
+	 *   the date, or a value that `LocalDate.from()` accepts
 	 */
-	public contains(date: LocalDateLike) {
+	public contains(date: string | LocalDateInput) {
 		return (this.start === null || this.start.compare(date) <= 0)
 			&& (this.end === null || this.end.compare(date) >= 0);
 	}
@@ -106,10 +107,17 @@ export class DateInterval {
 	 * start is after the end.
 	 *
 	 * @param startInclusive
+	 *   the first date, a value that `LocalDate.from()` accepts, or `null`
+	 *   for an open start
 	 * @param endInclusive
+	 *   the last date, a value that `LocalDate.from()` accepts, or `null`
+	 *   for an open end
 	 */
-	public static between(startInclusive: LocalDate | null, endInclusive: LocalDate | null) {
-		return new DateInterval(startInclusive, endInclusive);
+	public static between(
+		startInclusive: string | LocalDateInput | null,
+		endInclusive: string | LocalDateInput | null
+	): DateInterval {
+		return new DateInterval(toDate(startInclusive), toDate(endInclusive));
 	}
 
 	/**
@@ -149,17 +157,23 @@ export class DateInterval {
 	 * The end is part of the interval.
 	 *
 	 * @param endInclusive
+	 *   the last date, or a value that `LocalDate.from()` accepts
 	 */
-	public static endingAt(endInclusive: LocalDate) {
-		return new DateInterval(null, endInclusive);
+	public static endingAt(endInclusive: string | LocalDateInput): DateInterval {
+		return new DateInterval(null, LocalDate.from(endInclusive));
 	}
 
 	/**
 	 * Create an interval that starts at the given date and has an open end.
 	 *
 	 * @param startInclusive
+	 *   the first date, or a value that `LocalDate.from()` accepts
 	 */
-	public static startingAt(startInclusive: LocalDate) {
-		return new DateInterval(startInclusive, null);
+	public static startingAt(startInclusive: string | LocalDateInput): DateInterval {
+		return new DateInterval(LocalDate.from(startInclusive), null);
 	}
+}
+
+function toDate(value: string | LocalDateInput | null): LocalDate | null {
+	return value === null ? null : LocalDate.from(value);
 }
