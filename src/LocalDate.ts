@@ -1,6 +1,6 @@
 import type { LocalDateInput, LocalDateLike, LocalTimeInput } from './types/index.js';
 
-import { assertInt } from './helpers/assertInt.js';
+import { assertInt, assertIntInRange } from './helpers/assertInt.js';
 
 import { Month } from './Month.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
@@ -172,23 +172,13 @@ export class LocalDate implements LocalDateLike {
 		month: Month | number,
 		day: number
 	): LocalDate {
-		year = assertInt(year);
+		year = assertInt(year, 'year');
 
 		if(month instanceof Month) {
 			month = month.month;
 		}
-		month = assertInt(month);
-
-		day = assertInt(day);
-
-		if(month < 1 || month > 12) {
-			throw new Error('month must be between 1 and 12');
-		}
-
-		const maxDay = daysInMonth(year, month);
-		if(day < 1 || day > maxDay) {
-			throw new Error('day must be between 1 and ' + maxDay);
-		}
+		month = assertIntInRange(month, 'month', 1, 12);
+		day = assertIntInRange(day, 'day', 1, daysInMonth(year, month));
 
 		return new LocalDate(year, month, day);
 	}

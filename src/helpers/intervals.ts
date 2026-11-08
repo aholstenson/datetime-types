@@ -54,7 +54,7 @@ export function assertIntervalOrder<T extends Comparable<T>>(
 	end: T | null
 ) {
 	if(compareStartToEnd(start, end) > 0) {
-		throw new Error('start of interval must not be after end');
+		throw new RangeError('start of interval must not be after end');
 	}
 }
 

@@ -1,6 +1,6 @@
 import type { LocalTimeInput, LocalTimeLike } from './types/index.js';
 
-import { assertInt } from './helpers/assertInt.js';
+import { assertIntInRange } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseTime } from './helpers/parse.js';
@@ -124,26 +124,10 @@ export class LocalTime implements LocalTimeLike {
 		second: number=0,
 		millisecond: number=0
 	): LocalTime {
-		hour = assertInt(hour);
-		minute = assertInt(minute);
-		second = assertInt(second);
-		millisecond = assertInt(millisecond);
-
-		if(hour < 0 || hour > 23) {
-			throw new Error('hour must be between 0 and 23');
-		}
-
-		if(minute < 0 || minute > 59) {
-			throw new Error('minute must be between 0 and 59');
-		}
-
-		if(second < 0 || second > 59) {
-			throw new Error('second must be between 0 and 59');
-		}
-
-		if(millisecond < 0 || millisecond > 999) {
-			throw new Error('millisecond must be between 0 and 999');
-		}
+		hour = assertIntInRange(hour, 'hour', 0, 23);
+		minute = assertIntInRange(minute, 'minute', 0, 59);
+		second = assertIntInRange(second, 'second', 0, 59);
+		millisecond = assertIntInRange(millisecond, 'millisecond', 0, 999);
 
 		return new LocalTime(hour, minute, second, millisecond);
 	}

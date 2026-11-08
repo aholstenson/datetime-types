@@ -84,7 +84,7 @@ export class Year implements WithYear {
 	 * @param year
 	 */
 	public static of(year: number) {
-		year = assertInt(year);
+		year = assertInt(year, 'year');
 
 		return new Year(year);
 	}

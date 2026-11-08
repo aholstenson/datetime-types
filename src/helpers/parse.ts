@@ -159,7 +159,7 @@ function dateOf(match: RegExpExecArray, index: number, text: string): DateParts 
 function timeOf(match: RegExpExecArray, index: number, text: string): TimeParts {
 	const fraction = (match[index + 3] ?? '').padEnd(9, '0');
 	if(! /^0*$/.test(fraction.slice(3))) {
-		throw new Error(
+		throw new RangeError(
 			'Invalid time ' + JSON.stringify(text) + ', the time can not be more '
 			+ 'precise than a millisecond'
 		);
@@ -174,5 +174,5 @@ function timeOf(match: RegExpExecArray, index: number, text: string): TimeParts 
 }
 
 function invalid(kind: string, text: string) {
-	return new Error('Invalid ' + kind + ' ' + JSON.stringify(text));
+	return new RangeError('Invalid ' + kind + ' ' + JSON.stringify(text));
 }

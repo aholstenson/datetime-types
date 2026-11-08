@@ -9,7 +9,7 @@
 export function assertIsoCalendar(object: { readonly calendarId?: string }) {
 	const calendarId = object.calendarId;
 	if(calendarId !== undefined && calendarId !== 'iso8601') {
-		throw new Error(
+		throw new RangeError(
 			'Invalid calendar ' + JSON.stringify(calendarId) + ', only iso8601 is '
 			+ 'supported'
 		);
@@ -29,6 +29,6 @@ export function assertMillisecondPrecision(object: {
 	readonly nanosecond?: number
 }) {
 	if((object.microsecond ?? 0) !== 0 || (object.nanosecond ?? 0) !== 0) {
-		throw new Error('Invalid time, the time can not be more precise than a millisecond');
+		throw new RangeError('Invalid time, the time can not be more precise than a millisecond');
 	}
 }

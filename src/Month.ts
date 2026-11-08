@@ -1,4 +1,5 @@
 import type { CalendarFields, WithMonth } from './types/index.js';
+import { assertIntInRange } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
@@ -67,34 +68,7 @@ export class Month implements WithMonth {
 	 *   the number of the month
 	 */
 	public static of(month: number) {
-		switch(month) {
-			case 1:
-				return Month.JANUARY;
-			case 2:
-				return Month.FEBRUARY;
-			case 3:
-				return Month.MARCH;
-			case 4:
-				return Month.APRIL;
-			case 5:
-				return Month.MAY;
-			case 6:
-				return Month.JUNE;
-			case 7:
-				return Month.JULY;
-			case 8:
-				return Month.AUGUST;
-			case 9:
-				return Month.SEPTEMBER;
-			case 10:
-				return Month.OCTOBER;
-			case 11:
-				return Month.NOVEMBER;
-			case 12:
-				return Month.DECEMBER;
-		}
-
-		throw new Error('month must be between 1 and 12');
+		return MONTHS[assertIntInRange(month, 'month', 1, 12) - 1];
 	}
 
 	/**
@@ -199,3 +173,21 @@ export class Month implements WithMonth {
 	 */
 	public static readonly DECEMBER = new Month(12);
 }
+
+/**
+ * The months in order, so that `Month.of` can get a month from its number.
+ */
+const MONTHS: readonly Month[] = [
+	Month.JANUARY,
+	Month.FEBRUARY,
+	Month.MARCH,
+	Month.APRIL,
+	Month.MAY,
+	Month.JUNE,
+	Month.JULY,
+	Month.AUGUST,
+	Month.SEPTEMBER,
+	Month.OCTOBER,
+	Month.NOVEMBER,
+	Month.DECEMBER
+];
