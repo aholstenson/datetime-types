@@ -212,11 +212,37 @@ Interval.startingAt(LocalTime.of(8)).toString(); // '08:00:00/..'
 An interval of times can not go across midnight. Use `LocalDateTime` values
 for an interval such as 22:00 to 02:00.
 
-Both types have `contains`, `overlaps`, `equals`, `compare` and `toString`.
 `DateInterval.from('2024-03-01/..')` reads a string. `Interval.from` needs a
 function that reads each side, such as
 `Interval.from('08:00/17:00', LocalTime.from)`.
-`Interval` also has `isEmpty`, which is true when the start equals the end.
+`Interval.startingAt` and `Interval.endingAt` make an interval with one open
+side, and `DateInterval` has the same methods.
+
+Both types have these methods:
+
+* `contains(value)` and `overlaps(other)`
+* `encloses(other)`, which is true when all values of `other` are in the
+  interval
+* `abuts(other)`, which is true when the intervals meet without a gap and
+  without an overlap
+* `isBefore(valueOrInterval)` and `isAfter(valueOrInterval)`
+* `intersection(other)`, which gives the common part or `null`
+* `span(other)`, which gives the smallest interval that holds both
+* `equals`, `compare` and `toString`
+
+```javascript
+const march = DateInterval.from('2024-03-01/2024-03-31');
+
+march.abuts('2024-04-01/2024-04-30'); // true
+march.intersection('2024-03-25/2024-04-05').toString(); // '2024-03-25/2024-03-31'
+march.countDays(); // 31
+[ ...march.days() ].length; // 31
+```
+
+`DateInterval` also has `countDays()` and `days()`. `countDays()` gives
+`Infinity` for an interval with an open side, and `days()` throws a
+`RangeError` for it. `Interval` also has `isEmpty`, which is true when the
+start equals the end.
 
 ## Durations
 

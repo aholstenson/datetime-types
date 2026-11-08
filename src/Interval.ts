@@ -4,10 +4,14 @@ import {
 	assertIntervalOrder,
 	compareIntervals,
 	compareStartToEnd,
-	formatInterval
+	formatInterval,
+	isSame,
+	maxNullable,
+	minNullable
 } from './helpers/intervals.js';
 import { parseInterval } from './helpers/parse.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { compareNullable } from './helpers/compareNullable.js';
 
 /**
  * Interval between two values. The start is inclusive and the end is
@@ -71,6 +75,85 @@ export class Interval<T extends Comparable<T>> {
 
 		return compareStartToEnd(this.start, other.end) < 0
 			&& compareStartToEnd(other.start, this.end) < 0;
+	}
+
+	/**
+	 * Get if this interval holds all values of another interval.
+	 *
+	 * @param other
+	 */
+	public encloses(other: Interval<T>): boolean {
+		return compareNullable(this.start, other.start, 'first') <= 0
+			&& compareNullable(other.end, this.end, 'last') <= 0;
+	}
+
+	/**
+	 * Get if this interval and another interval meet without a gap and
+	 * without an overlap. This is true when one interval ends where the other
+	 * starts.
+	 *
+	 * @param other
+	 */
+	public abuts(other: Interval<T>): boolean {
+		return isSame(this.end, other.start) || isSame(other.end, this.start);
+	}
+
+	/**
+	 * Get if this interval ends before a value, or before another interval
+	 * starts. The end is not part of the interval, so an interval that ends
+	 * at the value is before it. An open end is never before anything.
+	 *
+	 * @param other
+	 *   a value or an interval
+	 */
+	public isBefore(other: T | Interval<T>): boolean {
+		const value = other instanceof Interval ? other.start : other;
+		return this.end !== null && value !== null && this.end.compare(value) <= 0;
+	}
+
+	/**
+	 * Get if this interval starts after a value, or after another interval
+	 * ends. An interval that starts at the end of another interval is after
+	 * it. An open start is never after anything.
+	 *
+	 * @param other
+	 *   a value or an interval
+	 */
+	public isAfter(other: T | Interval<T>): boolean {
+		if(other instanceof Interval) {
+			return this.start !== null && other.end !== null && this.start.compare(other.end) >= 0;
+		}
+
+		return this.start !== null && this.start.compare(other) > 0;
+	}
+
+	/**
+	 * Get the values that this interval and another interval have in common,
+	 * or `null` if they do not overlap.
+	 *
+	 * @param other
+	 */
+	public intersection(other: Interval<T>): Interval<T> | null {
+		if(! this.overlaps(other)) return null;
+
+		return new Interval<T>(
+			maxNullable(this.start, other.start, 'first'),
+			minNullable(this.end, other.end, 'last')
+		);
+	}
+
+	/**
+	 * Get the smallest interval that holds all values of this interval and of
+	 * another interval. If there is a gap between them, the result also holds
+	 * the gap.
+	 *
+	 * @param other
+	 */
+	public span(other: Interval<T>): Interval<T> {
+		return new Interval<T>(
+			minNullable(this.start, other.start, 'first'),
+			maxNullable(this.end, other.end, 'last')
+		);
 	}
 
 	/**

@@ -5,10 +5,15 @@ import {
 	assertIntervalOrder,
 	compareIntervals,
 	compareStartToEnd,
-	formatInterval
+	formatInterval,
+	isDayBefore,
+	maxNullable,
+	minNullable
 } from './helpers/intervals.js';
 import { parseInterval } from './helpers/parse.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { compareNullable } from './helpers/compareNullable.js';
+import { dateFromEpochDays, epochDays } from './helpers/arithmetic.js';
 
 /**
  * Interval between two dates, where both dates are inclusive. This matches
@@ -51,18 +56,129 @@ export class DateInterval {
 	 * common.
 	 *
 	 * @param other
+	 *   the other interval, or a string that `from()` accepts
 	 */
-	public overlaps(other: DateInterval) {
-		return compareStartToEnd(this.start, other.end) <= 0
-			&& compareStartToEnd(other.start, this.end) <= 0;
+	public overlaps(other: string | DateInterval) {
+		const o = DateInterval.from(other);
+		return compareStartToEnd(this.start, o.end) <= 0
+			&& compareStartToEnd(o.start, this.end) <= 0;
+	}
+
+	/**
+	 * Get if this interval holds all dates of another interval.
+	 *
+	 * @param other
+	 *   the other interval, or a string that `from()` accepts
+	 */
+	public encloses(other: string | DateInterval): boolean {
+		const o = DateInterval.from(other);
+		return compareNullable(this.start, o.start, 'first') <= 0
+			&& compareNullable(o.end, this.end, 'last') <= 0;
+	}
+
+	/**
+	 * Get if this interval and another interval meet without a gap and
+	 * without an overlap. This is true when one interval ends on the day
+	 * before the other starts, such as March and April.
+	 *
+	 * @param other
+	 *   the other interval, or a string that `from()` accepts
+	 */
+	public abuts(other: string | DateInterval): boolean {
+		const o = DateInterval.from(other);
+		return isDayBefore(this.end, o.start) || isDayBefore(o.end, this.start);
+	}
+
+	/**
+	 * Get if this interval ends before a date, or before another interval
+	 * starts. An open end is never before anything.
+	 *
+	 * @param other
+	 *   a date, a value that `LocalDate.from()` accepts, or an interval
+	 */
+	public isBefore(other: string | LocalDateInput | DateInterval): boolean {
+		const date = other instanceof DateInterval ? other.start : LocalDate.from(other);
+		return this.end !== null && date !== null && this.end.compare(date) < 0;
+	}
+
+	/**
+	 * Get if this interval starts after a date, or after another interval
+	 * ends. An open start is never after anything.
+	 *
+	 * @param other
+	 *   a date, a value that `LocalDate.from()` accepts, or an interval
+	 */
+	public isAfter(other: string | LocalDateInput | DateInterval): boolean {
+		const date = other instanceof DateInterval ? other.end : LocalDate.from(other);
+		return this.start !== null && date !== null && this.start.compare(date) > 0;
+	}
+
+	/**
+	 * Get the dates that this interval and another interval have in common,
+	 * or `null` if they do not overlap.
+	 *
+	 * @param other
+	 *   the other interval, or a string that `from()` accepts
+	 */
+	public intersection(other: string | DateInterval): DateInterval | null {
+		const o = DateInterval.from(other);
+		if(! this.overlaps(o)) return null;
+
+		return new DateInterval(
+			maxNullable(this.start, o.start, 'first'),
+			minNullable(this.end, o.end, 'last')
+		);
+	}
+
+	/**
+	 * Get the smallest interval that holds all dates of this interval and of
+	 * another interval. If there is a gap between them, the result also holds
+	 * the gap.
+	 *
+	 * @param other
+	 *   the other interval, or a string that `from()` accepts
+	 */
+	public span(other: string | DateInterval): DateInterval {
+		const o = DateInterval.from(other);
+		return new DateInterval(
+			minNullable(this.start, o.start, 'first'),
+			maxNullable(this.end, o.end, 'last')
+		);
+	}
+
+	/**
+	 * Get the number of dates in this interval, including the start and the
+	 * end. An interval with an open side gives `Infinity`.
+	 */
+	public countDays(): number {
+		if(this.start === null || this.end === null) return Infinity;
+
+		return epochDays(this.end) - epochDays(this.start) + 1;
+	}
+
+	/**
+	 * Get the dates in this interval in order, such as
+	 * `for(const date of interval.days())`. Throws a `RangeError` if a side
+	 * of the interval is open.
+	 *
+	 * The interval itself is not iterable, so that tools that compare or copy
+	 * iterable values do not go through the dates of an open interval.
+	 */
+	public days(): IterableIterator<LocalDate> {
+		if(this.start === null || this.end === null) {
+			throw new RangeError('Can not get the dates of an interval with an open side');
+		}
+
+		return daysBetween(epochDays(this.start), epochDays(this.end));
 	}
 
 	/**
 	 * Get if this interval equals another interval.
 	 *
 	 * @param other
+	 *   the other interval, or a string that `from()` accepts
 	 */
-	public equals(other: DateInterval | null | undefined) {
+	public equals(other: string | DateInterval | null | undefined) {
 		if(! other) return false;
 
 		return this.compare(other) === 0;
@@ -74,9 +190,10 @@ export class DateInterval {
 	 * open end comes after every date.
 	 *
 	 * @param other
+	 *   the other interval, or a string that `from()` accepts
 	 */
-	public compare(other: DateInterval) {
-		return compareIntervals(this, other);
+	public compare(other: string | DateInterval) {
+		return compareIntervals(this, DateInterval.from(other));
 	}
 
 	/**
@@ -148,8 +265,8 @@ export class DateInterval {
 	 * @param a
 	 * @param b
 	 */
-	public static compare(a: DateInterval, b: DateInterval) {
-		return a.compare(b);
+	public static compare(a: string | DateInterval, b: string | DateInterval) {
+		return DateInterval.from(a).compare(b);
 	}
 
 	/**
@@ -176,4 +293,11 @@ export class DateInterval {
 
 function toDate(value: string | LocalDateInput | null): LocalDate | null {
 	return value === null ? null : LocalDate.from(value);
+}
+
+function* daysBetween(first: number, last: number): IterableIterator<LocalDate> {
+	for(let day = first; day <= last; day++) {
+		const date = dateFromEpochDays(day);
+		yield LocalDate.of(date.year, date.month, date.day);
+	}
 }

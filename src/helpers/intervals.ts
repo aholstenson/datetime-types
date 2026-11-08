@@ -1,6 +1,8 @@
 import type { Comparable } from '../types/index.js';
 
 import { compareNullable } from './compareNullable.js';
+import { epochDays } from './arithmetic.js';
+import type { DateParts } from './parse.js';
 
 /**
  * Compare the start of an interval with the end of an interval. A `null`
@@ -71,4 +73,49 @@ export function formatInterval(start: unknown, end: unknown) {
 	return (start === null ? '..' : String(start))
 		+ '/'
 		+ (end === null ? '..' : String(end));
+}
+
+/**
+ * Get the smaller of two limits of intervals. See `compareNullable` for the
+ * meaning of `nulls`.
+ *
+ * @param a
+ * @param b
+ * @param nulls
+ */
+export function minNullable<T extends Comparable<T>>(a: T | null, b: T | null, nulls: 'first' | 'last') {
+	return compareNullable(a, b, nulls) <= 0 ? a : b;
+}
+
+/**
+ * Get the larger of two limits of intervals. See `compareNullable` for the
+ * meaning of `nulls`.
+ *
+ * @param a
+ * @param b
+ * @param nulls
+ */
+export function maxNullable<T extends Comparable<T>>(a: T | null, b: T | null, nulls: 'first' | 'last') {
+	return compareNullable(a, b, nulls) >= 0 ? a : b;
+}
+
+/**
+ * Get if two limits of intervals are the same value. An open limit is never
+ * the same as another limit.
+ *
+ * @param a
+ * @param b
+ */
+export function isSame<T extends Comparable<T>>(a: T | null, b: T | null) {
+	return a !== null && b !== null && a.compare(b) === 0;
+}
+
+/**
+ * Get if date `a` is the day before date `b`. An open limit gives `false`.
+ *
+ * @param a
+ * @param b
+ */
+export function isDayBefore(a: DateParts | null, b: DateParts | null) {
+	return a !== null && b !== null && epochDays(b) - epochDays(a) === 1;
 }
