@@ -1,19 +1,13 @@
 import { DayOfWeek } from '../src/DayOfWeek.js';
 
 describe('DayOfWeek', () => {
-	it('uses the same numbers as Date.getDay()', () => {
-		// 2024-01-07 is a Sunday.
-		for(let i = 0; i < 7; i++) {
-			const date = new Date(2024, 0, 7 + i);
-			expect(date.getDay()).toEqual(i);
-		}
-
-		expect(DayOfWeek.Sunday).toEqual(0);
-		expect(DayOfWeek.Monday).toEqual(1);
-		expect(DayOfWeek.Tuesday).toEqual(2);
-		expect(DayOfWeek.Wednesday).toEqual(3);
-		expect(DayOfWeek.Thursday).toEqual(4);
-		expect(DayOfWeek.Friday).toEqual(5);
-		expect(DayOfWeek.Saturday).toEqual(6);
+	it('uses ISO 8601 numbers from Monday as 1 to Sunday as 7', () => {
+		expect(DayOfWeek.MONDAY).toEqual(1);
+		expect(DayOfWeek.TUESDAY).toEqual(2);
+		expect(DayOfWeek.WEDNESDAY).toEqual(3);
+		expect(DayOfWeek.THURSDAY).toEqual(4);
+		expect(DayOfWeek.FRIDAY).toEqual(5);
+		expect(DayOfWeek.SATURDAY).toEqual(6);
+		expect(DayOfWeek.SUNDAY).toEqual(7);
 	});
 });

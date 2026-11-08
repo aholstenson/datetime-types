@@ -91,7 +91,7 @@ describe('DateInterval', () => {
 		});
 
 		it('accepts an object with date properties', () => {
-			expect(interval.contains({ year: 2024, month: 1, dayOfMonth: 15 })).toBe(true);
+			expect(interval.contains({ year: 2024, month: 1, day: 15 })).toBe(true);
 		});
 
 		it('excludes dates outside', () => {

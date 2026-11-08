@@ -60,29 +60,29 @@ export class Month implements WithMonth {
 	public static of(month: number) {
 		switch(month) {
 			case 1:
-				return this.January;
+				return this.JANUARY;
 			case 2:
-				return this.February;
+				return this.FEBRUARY;
 			case 3:
-				return this.March;
+				return this.MARCH;
 			case 4:
-				return this.April;
+				return this.APRIL;
 			case 5:
-				return this.May;
+				return this.MAY;
 			case 6:
-				return this.June;
+				return this.JUNE;
 			case 7:
-				return this.July;
+				return this.JULY;
 			case 8:
-				return this.August;
+				return this.AUGUST;
 			case 9:
-				return this.September;
+				return this.SEPTEMBER;
 			case 10:
-				return this.October;
+				return this.OCTOBER;
 			case 11:
-				return this.November;
+				return this.NOVEMBER;
 			case 12:
-				return this.December;
+				return this.DECEMBER;
 		}
 
 		throw new Error('month must be between 1 and 12');
@@ -91,60 +91,60 @@ export class Month implements WithMonth {
 	/**
 	 * January.
 	 */
-	public static readonly January = new Month(1);
+	public static readonly JANUARY = new Month(1);
 
 	/**
 	 * February.
 	 */
-	public static readonly February = new Month(2);
+	public static readonly FEBRUARY = new Month(2);
 
 	/**
 	 * March.
 	 */
-	public static readonly March = new Month(3);
+	public static readonly MARCH = new Month(3);
 
 	/**
 	 * April.
 	 */
-	public static readonly April = new Month(4);
+	public static readonly APRIL = new Month(4);
 
 	/**
 	 * May.
 	 */
-	public static readonly May = new Month(5);
+	public static readonly MAY = new Month(5);
 
 	/**
 	 * June.
 	 */
-	public static readonly June = new Month(6);
+	public static readonly JUNE = new Month(6);
 
 	/**
 	 * July.
 	 */
-	public static readonly July = new Month(7);
+	public static readonly JULY = new Month(7);
 
 	/**
 	 * August.
 	 */
-	public static readonly August = new Month(8);
+	public static readonly AUGUST = new Month(8);
 
 	/**
 	 * September.
 	 */
-	public static readonly September = new Month(9);
+	public static readonly SEPTEMBER = new Month(9);
 
 	/**
 	 * October.
 	 */
-	public static readonly October = new Month(10);
+	public static readonly OCTOBER = new Month(10);
 
 	/**
 	 * November.
 	 */
-	public static readonly November = new Month(11);
+	public static readonly NOVEMBER = new Month(11);
 
 	/**
 	 * December.
 	 */
-	public static readonly December = new Month(12);
+	public static readonly DECEMBER = new Month(12);
 }

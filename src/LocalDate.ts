@@ -25,12 +25,12 @@ export class LocalDate implements LocalDateLike {
 	/**
 	 * The day of the month.
 	 */
-	public readonly dayOfMonth: number;
+	public readonly day: number;
 
-	private constructor(year: number, month: number, dayOfMonth: number) {
+	private constructor(year: number, month: number, day: number) {
 		this.year = year;
 		this.month = month;
-		this.dayOfMonth = dayOfMonth;
+		this.day = day;
 	}
 
 	/**
@@ -56,7 +56,7 @@ export class LocalDate implements LocalDateLike {
 		const m = compareInt(this.month, other.month);
 		if(m !== 0) return m;
 
-		return compareInt(this.dayOfMonth, other.dayOfMonth);
+		return compareInt(this.day, other.day);
 	}
 
 	/**
@@ -66,7 +66,7 @@ export class LocalDate implements LocalDateLike {
 		const date = new Date(2000, 0, 1, 0, 0, 0, 0);
 		// The Date constructor reads years 0 to 99 as 1900 to 1999, so set the
 		// full year separately.
-		date.setFullYear(this.year, this.month - 1, this.dayOfMonth);
+		date.setFullYear(this.year, this.month - 1, this.day);
 		return date;
 	}
 
@@ -92,7 +92,7 @@ export class LocalDate implements LocalDateLike {
 	public toString() {
 		let result = formatYear(this.year);
 		result += '-' + zeroPadInt(this.month, 2);
-		result += '-' + zeroPadInt(this.dayOfMonth, 2);
+		result += '-' + zeroPadInt(this.day, 2);
 		return result;
 	}
 
@@ -105,13 +105,13 @@ export class LocalDate implements LocalDateLike {
 	 *   the year of the date
 	 * @param month
 	 *   the month of the date
-	 * @param dayOfMonth
+	 * @param day
 	 *   the day of the month
 	 */
 	public static of(
 		year: number,
 		month: Month | number,
-		dayOfMonth: number
+		day: number
 	): LocalDate {
 		year = assertInt(year);
 
@@ -120,7 +120,7 @@ export class LocalDate implements LocalDateLike {
 		}
 		month = assertInt(month);
 
-		dayOfMonth = assertInt(dayOfMonth);
+		day = assertInt(day);
 
 		if(month < 1 || month > 12) {
 			throw new Error('month must be between 1 and 12');
@@ -139,11 +139,11 @@ export class LocalDate implements LocalDateLike {
 				break;
 		}
 
-		if(dayOfMonth < 1 || dayOfMonth > daysInMonth) {
-			throw new Error('dayOfMonth must be between 1 and ' + daysInMonth);
+		if(day < 1 || day > daysInMonth) {
+			throw new Error('day must be between 1 and ' + daysInMonth);
 		}
 
-		return new LocalDate(year, month, dayOfMonth);
+		return new LocalDate(year, month, day);
 	}
 
 	/**
@@ -161,7 +161,7 @@ export class LocalDate implements LocalDateLike {
 
 	/**
 	 * Create a local time from an object containing numeric `year`, `month`
-	 * and `dayOfMonth` properties.
+	 * and `day` properties.
 	 *
 	 * @param object
 	 */
@@ -169,7 +169,7 @@ export class LocalDate implements LocalDateLike {
 		return this.of(
 			object.year,
 			object.month,
-			object.dayOfMonth
+			object.day
 		);
 	}
 }

@@ -35,8 +35,8 @@ Types implemented:
 * `LocalDate` for representing a date without a time
 * `LocalTime` for representing a time without a date or timezone
 * `LocalDateTime` for representing a date and time without a timezone
-* `DayOfWeek` enumeration
-* `Month` enumeration
+* `DayOfWeek` enumeration, with ISO 8601 numbers from `MONDAY` (1) to `SUNDAY` (7)
+* `Month` for representing a month, with constants from `Month.JANUARY` to `Month.DECEMBER`
 * `Year` for representing a single year
 * `Interval` for representing an interval between two values, where the end
   is not part of the interval

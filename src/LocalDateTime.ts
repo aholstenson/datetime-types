@@ -24,8 +24,8 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		return this.date.month;
 	}
 
-	get dayOfMonth() {
-		return this.date.dayOfMonth;
+	get day() {
+		return this.date.day;
 	}
 
 	get hour() {
@@ -40,8 +40,8 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		return this.time.second;
 	}
 
-	get milliOfSecond() {
-		return this.time.milliOfSecond;
+	get millisecond() {
+		return this.time.millisecond;
 	}
 
 	/**

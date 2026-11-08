@@ -1,8 +1,8 @@
-export type * from './WithDayOfMonth.js';
+export type * from './WithDay.js';
 export type * from './WithHour.js';
 export type * from './WithMinute.js';
 export type * from './WithMonth.js';
-export type * from './WithMilliOfSecond.js';
+export type * from './WithMillisecond.js';
 export type * from './WithSecond.js';
 export type * from './WithYear.js';
 

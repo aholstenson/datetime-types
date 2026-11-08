@@ -1,39 +1,40 @@
 /**
- * Enum representing the day of week.
+ * Day of the week. The numbers follow ISO 8601 and `Temporal`: Monday is 1
+ * and Sunday is 7. This is not the same as `Date.getDay()`, where Sunday is 0.
  */
 export enum DayOfWeek {
 	/**
-	 * Sunday.
-	 */
-	Sunday = 0,
-
-	/**
 	 * Monday.
 	 */
-	Monday = 1,
+	MONDAY = 1,
 
 	/**
 	 * Tuesday.
 	 */
-	Tuesday = 2,
+	TUESDAY = 2,
 
 	/**
 	 * Wednesday.
 	 */
-	Wednesday = 3,
+	WEDNESDAY = 3,
 
 	/**
 	 * Thursday.
 	 */
-	Thursday = 4,
+	THURSDAY = 4,
 
 	/**
 	 * Friday.
 	 */
-	Friday = 5,
+	FRIDAY = 5,
 
 	/**
 	 * Saturday.
 	 */
-	Saturday = 6
+	SATURDAY = 6,
+
+	/**
+	 * Sunday.
+	 */
+	SUNDAY = 7
 }

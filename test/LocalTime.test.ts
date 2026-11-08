@@ -8,7 +8,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(0);
-		expect(time.milliOfSecond).toEqual(0);
+		expect(time.millisecond).toEqual(0);
 
 		expect(time.toString()).toEqual('02:14:00');
 	});
@@ -20,7 +20,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(0);
-		expect(time.milliOfSecond).toEqual(0);
+		expect(time.millisecond).toEqual(0);
 
 		expect(time.toString()).toEqual('02:14:00');
 	});
@@ -32,7 +32,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(12);
-		expect(time.milliOfSecond).toEqual(0);
+		expect(time.millisecond).toEqual(0);
 
 		expect(time.toString()).toEqual('02:14:12');
 	});
@@ -44,7 +44,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(12);
-		expect(time.milliOfSecond).toEqual(9);
+		expect(time.millisecond).toEqual(9);
 
 		expect(time.toString()).toEqual('02:14:12.009');
 	});
@@ -56,7 +56,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(12);
-		expect(time.milliOfSecond).toEqual(99);
+		expect(time.millisecond).toEqual(99);
 
 		expect(time.toString()).toEqual('02:14:12.099');
 	});
@@ -68,7 +68,7 @@ describe('LocalTime', () => {
 		expect(time.hour).toEqual(2);
 		expect(time.minute).toEqual(14);
 		expect(time.second).toEqual(12);
-		expect(time.milliOfSecond).toEqual(299);
+		expect(time.millisecond).toEqual(299);
 
 		expect(time.toString()).toEqual('02:14:12.299');
 	});
@@ -90,7 +90,7 @@ describe('LocalTime validation', () => {
 	});
 
 	it('of() is midnight', () => {
-		expect(LocalTime.of().equals(LocalTime.Midnight)).toBe(true);
+		expect(LocalTime.of().equals(LocalTime.MIDNIGHT)).toBe(true);
 	});
 });
 
@@ -113,8 +113,8 @@ describe('LocalTime formatting', () => {
 		expect(LocalTime.of(2, 14, 0, milli).toString()).toEqual(expected);
 	});
 
-	it('Maximum', () => {
-		expect(LocalTime.Maximum.toString()).toEqual('23:59:59.999');
+	it('MAX', () => {
+		expect(LocalTime.MAX.toString()).toEqual('23:59:59.999');
 	});
 });
 

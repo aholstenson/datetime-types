@@ -2,13 +2,13 @@ import { Month } from '../src/Month.js';
 
 describe('Month', () => {
 	it('of(1) returns January', () => {
-		expect(Month.of(1)).toBe(Month.January);
-		expect(Month.January.month).toEqual(1);
+		expect(Month.of(1)).toBe(Month.JANUARY);
+		expect(Month.JANUARY.month).toEqual(1);
 	});
 
 	it('of(12) returns December', () => {
-		expect(Month.of(12)).toBe(Month.December);
-		expect(Month.December.month).toEqual(12);
+		expect(Month.of(12)).toBe(Month.DECEMBER);
+		expect(Month.DECEMBER.month).toEqual(12);
 	});
 
 	it('of(n) returns the month with the same number', () => {
@@ -22,21 +22,21 @@ describe('Month', () => {
 	});
 
 	it('compare', () => {
-		expect(Month.March.compare(Month.April)).toEqual(-1);
-		expect(Month.April.compare({ month: 4 })).toEqual(0);
-		expect(Month.May.compare(Month.April)).toEqual(1);
+		expect(Month.MARCH.compare(Month.APRIL)).toEqual(-1);
+		expect(Month.APRIL.compare({ month: 4 })).toEqual(0);
+		expect(Month.MAY.compare(Month.APRIL)).toEqual(1);
 	});
 
 	it('equals', () => {
-		expect(Month.March.equals(Month.of(3))).toBe(true);
-		expect(Month.March.equals({ month: 3 })).toBe(true);
-		expect(Month.March.equals(Month.April)).toBe(false);
-		expect(Month.March.equals(null)).toBe(false);
+		expect(Month.MARCH.equals(Month.of(3))).toBe(true);
+		expect(Month.MARCH.equals({ month: 3 })).toBe(true);
+		expect(Month.MARCH.equals(Month.APRIL)).toBe(false);
+		expect(Month.MARCH.equals(null)).toBe(false);
 	});
 
 	it('toString', () => {
-		expect(Month.January.toString()).toEqual('--01');
-		expect(Month.March.toString()).toEqual('--03');
-		expect(Month.December.toString()).toEqual('--12');
+		expect(Month.JANUARY.toString()).toEqual('--01');
+		expect(Month.MARCH.toString()).toEqual('--03');
+		expect(Month.DECEMBER.toString()).toEqual('--12');
 	});
 });

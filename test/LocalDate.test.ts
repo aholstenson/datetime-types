@@ -8,7 +8,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(2004);
 		expect(date.month).toEqual(8);
-		expect(date.dayOfMonth).toEqual(4);
+		expect(date.day).toEqual(4);
 
 		expect(date.toString()).toEqual('2004-08-04');
 	});
@@ -19,7 +19,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(2004);
 		expect(date.month).toEqual(2);
-		expect(date.dayOfMonth).toEqual(28);
+		expect(date.day).toEqual(28);
 
 		expect(date.toString()).toEqual('2004-02-28');
 	});
@@ -30,7 +30,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(2004);
 		expect(date.month).toEqual(2);
-		expect(date.dayOfMonth).toEqual(29);
+		expect(date.day).toEqual(29);
 
 		expect(date.toString()).toEqual('2004-02-29');
 	});
@@ -45,7 +45,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(201);
 		expect(date.month).toEqual(12);
-		expect(date.dayOfMonth).toEqual(2);
+		expect(date.day).toEqual(2);
 
 		expect(date.toString()).toEqual('0201-12-02');
 	});
@@ -56,7 +56,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(-201);
 		expect(date.month).toEqual(12);
-		expect(date.dayOfMonth).toEqual(2);
+		expect(date.day).toEqual(2);
 
 		expect(date.toString()).toEqual('-000201-12-02');
 	});
@@ -67,7 +67,7 @@ describe('LocalDate', () => {
 
 		expect(date.year).toEqual(20240);
 		expect(date.month).toEqual(12);
-		expect(date.dayOfMonth).toEqual(2);
+		expect(date.day).toEqual(2);
 
 		expect(date.toString()).toEqual('+020240-12-02');
 	});
@@ -96,13 +96,13 @@ describe('LocalDate validation', () => {
 	});
 
 	it('of(year, Month, day) accepts a Month', () => {
-		expect(LocalDate.of(2024, Month.March, 1).month).toEqual(3);
+		expect(LocalDate.of(2024, Month.MARCH, 1).month).toEqual(3);
 	});
 });
 
 describe('LocalDate conversion', () => {
 	it('from(object)', () => {
-		expect(LocalDate.from({ year: 2024, month: 3, dayOfMonth: 1 }).toString()).toEqual('2024-03-01');
+		expect(LocalDate.from({ year: 2024, month: 3, day: 1 }).toString()).toEqual('2024-03-01');
 	});
 
 	it('fromDate(date)', () => {
@@ -133,7 +133,7 @@ describe('LocalDate comparison', () => {
 		expect(date.compare(LocalDate.of(2025, 1, 1))).toEqual(-1);
 		expect(date.compare(LocalDate.of(2024, 4, 1))).toEqual(-1);
 		expect(date.compare(LocalDate.of(2024, 3, 16))).toEqual(-1);
-		expect(date.compare({ year: 2024, month: 3, dayOfMonth: 15 })).toEqual(0);
+		expect(date.compare({ year: 2024, month: 3, day: 15 })).toEqual(0);
 		expect(date.compare(LocalDate.of(2024, 3, 14))).toEqual(1);
 		expect(date.compare(LocalDate.of(2024, 2, 28))).toEqual(1);
 		expect(date.compare(LocalDate.of(2023, 12, 31))).toEqual(1);

@@ -1,4 +1,4 @@
-import type { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike } from './types/index.js';
+import type { WithHour, WithMinute, WithSecond, WithMillisecond, LocalTimeLike } from './types/index.js';
 
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
@@ -27,18 +27,18 @@ export class LocalTime implements LocalTimeLike {
 	/**
 	 * The millisecond of the time.
 	 */
-	public readonly milliOfSecond: number;
+	public readonly millisecond: number;
 
 	private constructor(
 		hour: number,
 		minute: number,
 		second: number,
-		milliOfSecond: number
+		millisecond: number
 	) {
 		this.hour = hour;
 		this.minute = minute;
 		this.second = second;
-		this.milliOfSecond = milliOfSecond;
+		this.millisecond = millisecond;
 	}
 
 	/**
@@ -67,7 +67,7 @@ export class LocalTime implements LocalTimeLike {
 		const s = compareInt(this.second, other.second);
 		if(s !== 0) return s;
 
-		return compareInt(this.milliOfSecond, other.milliOfSecond);
+		return compareInt(this.millisecond, other.millisecond);
 	}
 
 	/**
@@ -96,32 +96,36 @@ export class LocalTime implements LocalTimeLike {
 			+ ':' + zeroPadInt(this.minute, 2)
 			+ ':' + zeroPadInt(this.second, 2);
 
-		if(this.milliOfSecond > 0) {
+		if(this.millisecond > 0) {
 			// Write the fraction without trailing zeros, as Temporal does.
-			result += '.' + zeroPadInt(this.milliOfSecond, 3).replace(/0+$/, '');
+			result += '.' + zeroPadInt(this.millisecond, 3).replace(/0+$/, '');
 		}
 
 		return result;
 	}
 
 	/**
-	 * Create a new local time instance from the given time.
+	 * Create a local time. Will throw an error if a value is out of range.
 	 *
 	 * @param hour
+	 *   the hour, from 0 to 23
 	 * @param minute
+	 *   the minute, from 0 to 59
 	 * @param second
-	 * @param nanoOfSecond
+	 *   the second, from 0 to 59
+	 * @param millisecond
+	 *   the millisecond, from 0 to 999
 	 */
 	public static of(
 		hour: number=0,
 		minute: number=0,
 		second: number=0,
-		milliOfSecond: number=0
+		millisecond: number=0
 	): LocalTime {
 		hour = assertInt(hour);
 		minute = assertInt(minute);
 		second = assertInt(second);
-		milliOfSecond = assertInt(milliOfSecond);
+		millisecond = assertInt(millisecond);
 
 		if(hour < 0 || hour > 23) {
 			throw new Error('hour must be between 0 and 23');
@@ -135,26 +139,26 @@ export class LocalTime implements LocalTimeLike {
 			throw new Error('second must be between 0 and 59');
 		}
 
-		if(milliOfSecond < 0 || milliOfSecond > 999) {
-			throw new Error('milliOfSecond must be between 0 and 999');
+		if(millisecond < 0 || millisecond > 999) {
+			throw new Error('millisecond must be between 0 and 999');
 		}
 
-		return new LocalTime(hour, minute, second, milliOfSecond);
+		return new LocalTime(hour, minute, second, millisecond);
 	}
 
 	/**
 	 * Create a local time from an object containing a combination of numeric
-	 * `hour`, `minute`, `second` or `milliOfSecond` properties. If any
+	 * `hour`, `minute`, `second` or `millisecond` properties. If any
 	 * property is not present it will be set to `0`.
 	 *
 	 * @param object
 	 */
-	public static from(object: WithHour | WithMinute | WithSecond | WithMilliOfSecond) {
+	public static from(object: WithHour | WithMinute | WithSecond | WithMillisecond) {
 		return this.of(
 			'hour' in object ? object.hour : 0,
 			'minute' in object ? object.minute : 0,
 			'second' in object ? object.second : 0,
-			'milliOfSecond' in object ? object.milliOfSecond : 0
+			'millisecond' in object ? object.millisecond : 0
 		);
 	}
 
@@ -189,15 +193,15 @@ export class LocalTime implements LocalTimeLike {
 	/**
 	 * The minimum time that can be represented.
 	 */
-	public static readonly Minimum = new LocalTime(0, 0, 0, 0);
+	public static readonly MIN = new LocalTime(0, 0, 0, 0);
 
 	/**
 	 * The maximum time that can be represented.
 	 */
-	public static readonly Maximum = new LocalTime(23, 59, 59, 999);
+	public static readonly MAX = new LocalTime(23, 59, 59, 999);
 
 	/**
 	 * Time at midnight.
 	 */
-	public static readonly Midnight = new LocalTime(0, 0, 0, 0);
+	public static readonly MIDNIGHT = new LocalTime(0, 0, 0, 0);
 }

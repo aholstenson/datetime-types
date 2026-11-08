@@ -47,8 +47,8 @@ describe('Interval', () => {
 			expect(Interval.between(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 2, 1)).toString())
 				.toEqual('2024-01-01/2024-02-01');
 			expect(Interval.between(Year.of(2000), Year.of(2010)).toString()).toEqual('2000/2010');
-			expect(Interval.between(Month.March, Month.June).contains(Month.April)).toBe(true);
-			expect(Interval.between(Month.March, Month.June).toString()).toEqual('--03/--06');
+			expect(Interval.between(Month.MARCH, Month.JUNE).contains(Month.APRIL)).toBe(true);
+			expect(Interval.between(Month.MARCH, Month.JUNE).toString()).toEqual('--03/--06');
 		});
 
 		it('rejects types that are not comparable', () => {
@@ -90,9 +90,9 @@ describe('Interval', () => {
 		});
 
 		it('follows open sides', () => {
-			expect(Interval.until(t17).contains(LocalTime.Minimum)).toBe(true);
+			expect(Interval.until(t17).contains(LocalTime.MIN)).toBe(true);
 			expect(Interval.until(t17).contains(t17)).toBe(false);
-			expect(Interval.from(t8).contains(LocalTime.Maximum)).toBe(true);
+			expect(Interval.from(t8).contains(LocalTime.MAX)).toBe(true);
 			expect(Interval.from(t8).contains(LocalTime.of(7))).toBe(false);
 		});
 

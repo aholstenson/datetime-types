@@ -1,5 +1,5 @@
 /**
- * Interface used to mark objects that contain a year.
+ * Interface used to mark objects that contain an hour.
  */
 export interface WithHour {
 	/**

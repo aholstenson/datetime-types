@@ -7,20 +7,20 @@ describe('LocalDateTime', () => {
 		const value = LocalDateTime.from({
 			year: 2024,
 			month: 2,
-			dayOfMonth: 29,
+			day: 29,
 			hour: 13,
 			minute: 5,
 			second: 7,
-			milliOfSecond: 42
+			millisecond: 42
 		});
 
 		expect(value.year).toEqual(2024);
 		expect(value.month).toEqual(2);
-		expect(value.dayOfMonth).toEqual(29);
+		expect(value.day).toEqual(29);
 		expect(value.hour).toEqual(13);
 		expect(value.minute).toEqual(5);
 		expect(value.second).toEqual(7);
-		expect(value.milliOfSecond).toEqual(42);
+		expect(value.millisecond).toEqual(42);
 
 		expect(value.toString()).toEqual('2024-02-29T13:05:07.042');
 	});
@@ -36,8 +36,8 @@ describe('LocalDateTime', () => {
 
 	it('fromDateAndTime with an invalid date throws', () => {
 		expect(() => LocalDateTime.fromDateAndTime(
-			{ year: 2023, month: 2, dayOfMonth: 29 },
-			LocalTime.Midnight
+			{ year: 2023, month: 2, day: 29 },
+			LocalTime.MIDNIGHT
 		)).toThrow();
 	});
 
@@ -67,11 +67,11 @@ describe('LocalDateTime', () => {
 		expect(a.equals({
 			year: 2024,
 			month: 1,
-			dayOfMonth: 1,
+			day: 1,
 			hour: 10,
 			minute: 0,
 			second: 0,
-			milliOfSecond: 0
+			millisecond: 0
 		})).toBe(true);
 		expect(a.equals(LocalDateTime.fromDateAndTime(LocalDate.of(2024, 1, 1), LocalTime.of(11)))).toBe(false);
 		expect(a.equals(null)).toBe(false);
