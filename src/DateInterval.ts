@@ -33,15 +33,17 @@ export class DateInterval {
 	}
 
 	/**
-	 * Compare this interval with another interval;
+	 * Compare this interval with another interval. The start is compared
+	 * first and then the end. An open start comes before every date and an
+	 * open end comes after every date.
 	 *
 	 * @param other
 	 */
 	public compare(other: DateInterval) {
-		const s = compareNullable(this.start, other.start);
+		const s = compareNullable(this.start, other.start, 'first');
 		if(s !== 0) return s;
 
-		return compareNullable(this.end, other.end);
+		return compareNullable(this.end, other.end, 'last');
 	}
 
 	/**

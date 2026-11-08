@@ -39,6 +39,27 @@ describe('DateInterval', () => {
 		expect(DateInterval.between(jan1, mar1).compare(DateInterval.from(jan1))).toEqual(-1);
 	});
 
+	it('compare puts an open start before a bounded start', () => {
+		expect(DateInterval.until(mar1).compare(DateInterval.between(jan1, mar1))).toEqual(-1);
+		expect(DateInterval.between(jan1, mar1).compare(DateInterval.until(mar1))).toEqual(1);
+	});
+
+	it('compare sorts open and bounded intervals', () => {
+		const sorted = [
+			DateInterval.from(jan1),
+			DateInterval.between(feb1, mar1),
+			DateInterval.until(feb1),
+			DateInterval.between(jan1, feb1)
+		].sort((a, b) => a.compare(b));
+
+		expect(sorted).toEqual([
+			DateInterval.until(feb1),
+			DateInterval.between(jan1, feb1),
+			DateInterval.from(jan1),
+			DateInterval.between(feb1, mar1)
+		]);
+	});
+
 	it('equals', () => {
 		expect(DateInterval.between(jan1, feb1).equals(DateInterval.between(LocalDate.of(2024, 1, 1), feb1))).toBe(true);
 		expect(DateInterval.from(jan1).equals(DateInterval.from(jan1))).toBe(true);
