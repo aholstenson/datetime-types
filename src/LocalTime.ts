@@ -204,7 +204,7 @@ export class LocalTime implements LocalTimeLike {
 	 * @param date
 	 */
 	public static fromDate(date: Date) {
-		return this.of(
+		return LocalTime.of(
 			date.getHours(),
 			date.getMinutes(),
 			date.getSeconds(),
@@ -218,7 +218,7 @@ export class LocalTime implements LocalTimeLike {
 	public static now(): LocalTime {
 		const date = new Date();
 
-		return this.of(
+		return LocalTime.of(
 			date.getHours(),
 			date.getMinutes(),
 			date.getSeconds(),

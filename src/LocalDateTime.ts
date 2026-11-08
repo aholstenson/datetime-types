@@ -266,7 +266,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * @param date
 	 */
 	public static fromDate(date: Date) {
-		return this.fromDateAndTime(
+		return LocalDateTime.fromDateAndTime(
 			LocalDate.fromDate(date),
 			LocalTime.fromDate(date)
 		);

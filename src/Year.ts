@@ -138,6 +138,6 @@ export class Year implements WithYear {
 	 * @param date
 	 */
 	public static fromDate(date: Date) {
-		return this.of(date.getFullYear());
+		return Year.of(date.getFullYear());
 	}
 }

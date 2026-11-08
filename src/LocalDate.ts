@@ -199,7 +199,7 @@ export class LocalDate implements LocalDateLike {
 	 * @param date
 	 */
 	public static fromDate(date: Date): LocalDate {
-		return this.of(
+		return LocalDate.of(
 			date.getFullYear(),
 			date.getMonth() + 1,
 			date.getDate()

@@ -69,29 +69,29 @@ export class Month implements WithMonth {
 	public static of(month: number) {
 		switch(month) {
 			case 1:
-				return this.JANUARY;
+				return Month.JANUARY;
 			case 2:
-				return this.FEBRUARY;
+				return Month.FEBRUARY;
 			case 3:
-				return this.MARCH;
+				return Month.MARCH;
 			case 4:
-				return this.APRIL;
+				return Month.APRIL;
 			case 5:
-				return this.MAY;
+				return Month.MAY;
 			case 6:
-				return this.JUNE;
+				return Month.JUNE;
 			case 7:
-				return this.JULY;
+				return Month.JULY;
 			case 8:
-				return this.AUGUST;
+				return Month.AUGUST;
 			case 9:
-				return this.SEPTEMBER;
+				return Month.SEPTEMBER;
 			case 10:
-				return this.OCTOBER;
+				return Month.OCTOBER;
 			case 11:
-				return this.NOVEMBER;
+				return Month.NOVEMBER;
 			case 12:
-				return this.DECEMBER;
+				return Month.DECEMBER;
 		}
 
 		throw new Error('month must be between 1 and 12');
