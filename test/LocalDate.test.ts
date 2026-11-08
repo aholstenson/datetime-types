@@ -1,4 +1,5 @@
 import { LocalDate } from '../src/LocalDate.js';
+import { Month } from '../src/Month.js';
 
 describe('LocalDate', () => {
 	it('of(2004, 8, 4)', () => {
@@ -69,5 +70,72 @@ describe('LocalDate', () => {
 		expect(date.dayOfMonth).toEqual(2);
 
 		expect(date.toString()).toEqual('+20240-12-02');
+	});
+});
+
+describe('LocalDate validation', () => {
+	it.each([
+		[ 2023, 2, 29 ],
+		[ 1900, 2, 29 ],
+		[ 2024, 4, 31 ],
+		[ 2024, 0, 1 ],
+		[ 2024, 13, 1 ],
+		[ 2024, 1, 0 ],
+		[ 2024, 1, 32 ],
+		[ 2024.5, 1, 1 ]
+	])('of(%s, %s, %s) throws', (year, month, day) => {
+		expect(() => LocalDate.of(year, month, day)).toThrow();
+	});
+
+	it('of(2000, 2, 29) accepts a leap day in a year divisible by 400', () => {
+		expect(LocalDate.of(2000, 2, 29).toString()).toEqual('2000-02-29');
+	});
+
+	it('of(-4, 2, 29) accepts a leap day in a negative year', () => {
+		expect(LocalDate.of(-4, 2, 29).toString()).toEqual('-0004-02-29');
+	});
+
+	it('of(year, Month, day) accepts a Month', () => {
+		expect(LocalDate.of(2024, Month.March, 1).month).toEqual(3);
+	});
+});
+
+describe('LocalDate conversion', () => {
+	it('from(object)', () => {
+		expect(LocalDate.from({ year: 2024, month: 3, dayOfMonth: 1 }).toString()).toEqual('2024-03-01');
+	});
+
+	it('fromDate(date)', () => {
+		expect(LocalDate.fromDate(new Date(2024, 2, 1, 23, 59)).toString()).toEqual('2024-03-01');
+	});
+
+	it('toDateAtMidnight()', () => {
+		const date = LocalDate.of(2024, 3, 1).toDateAtMidnight();
+		expect(date.getFullYear()).toEqual(2024);
+		expect(date.getMonth()).toEqual(2);
+		expect(date.getDate()).toEqual(1);
+		expect(date.getHours()).toEqual(0);
+		expect(date.getMinutes()).toEqual(0);
+	});
+});
+
+describe('LocalDate comparison', () => {
+	it('compare', () => {
+		const date = LocalDate.of(2024, 3, 15);
+		expect(date.compare(LocalDate.of(2025, 1, 1))).toEqual(-1);
+		expect(date.compare(LocalDate.of(2024, 4, 1))).toEqual(-1);
+		expect(date.compare(LocalDate.of(2024, 3, 16))).toEqual(-1);
+		expect(date.compare({ year: 2024, month: 3, dayOfMonth: 15 })).toEqual(0);
+		expect(date.compare(LocalDate.of(2024, 3, 14))).toEqual(1);
+		expect(date.compare(LocalDate.of(2024, 2, 28))).toEqual(1);
+		expect(date.compare(LocalDate.of(2023, 12, 31))).toEqual(1);
+	});
+
+	it('equals', () => {
+		const date = LocalDate.of(2024, 3, 15);
+		expect(date.equals(LocalDate.of(2024, 3, 15))).toBe(true);
+		expect(date.equals(LocalDate.of(2024, 3, 16))).toBe(false);
+		expect(date.equals(null)).toBe(false);
+		expect(date.equals(undefined)).toBe(false);
 	});
 });
