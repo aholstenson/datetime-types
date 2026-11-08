@@ -17,6 +17,16 @@ const DATE_PATTERN = new RegExp('^' + DATE + '$');
 const TIME_PATTERN = new RegExp('^' + TIME + '$');
 const DATE_TIME_PATTERN = new RegExp('^' + DATE + '[Tt]' + TIME + '$');
 
+const FRACTION = '(?:[.,](\\d{1,9}))?';
+const DURATION_PATTERN = new RegExp(
+	'^([+-])?P'
+	+ '(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)W)?(?:(\\d+)D)?'
+	+ '(?:T(?:(\\d+)' + FRACTION + 'H)?(?:(\\d+)' + FRACTION + 'M)?(?:(\\d+)' + FRACTION + 'S)?)?$',
+	'i'
+);
+
+const NANOSECONDS_PER_MILLISECOND = 1_000_000;
+
 /**
  * The numbers of a date.
  */
@@ -137,6 +147,93 @@ export function parseInterval<T>(
 		parts[0] === '..' ? null : parseValue(parts[0]),
 		parts[1] === '..' ? null : parseValue(parts[1])
 	];
+}
+
+/**
+ * The numbers of a duration.
+ */
+export interface DurationParts {
+	years: number;
+	months: number;
+	weeks: number;
+	days: number;
+	hours: number;
+	minutes: number;
+	seconds: number;
+	milliseconds: number;
+}
+
+/**
+ * Read a duration such as `P1Y2M3DT4H5M6.5S` or `-P1D`. The last time unit
+ * can have a fraction, such as `PT1.5H`. A fraction that is more precise than
+ * a millisecond gives an error.
+ *
+ * @param text
+ *   the string to read
+ */
+export function parseDuration(text: string): DurationParts {
+	const match = DURATION_PATTERN.exec(text);
+	// The string must have at least one unit, and a `T` must have a unit
+	// after it.
+	if(! match
+		|| match.slice(2).every(part => part === undefined)
+		|| /T$/i.test(text)
+	) {
+		throw invalid('duration', text);
+	}
+
+	const [
+		, sign, years, months, weeks, days,
+		hours, hourFraction, minutes, minuteFraction, seconds, secondFraction
+	] = match;
+
+	// Only the last unit can have a fraction.
+	if((hourFraction !== undefined && (minutes !== undefined || seconds !== undefined))
+		|| (minuteFraction !== undefined && seconds !== undefined)
+	) {
+		throw invalid('duration', text);
+	}
+
+	// Change the fraction into nanoseconds, then into whole units.
+	let nanoseconds = 0;
+	if(hourFraction !== undefined) {
+		nanoseconds = fractionToNanoseconds(hourFraction) * 3600;
+	} else if(minuteFraction !== undefined) {
+		nanoseconds = fractionToNanoseconds(minuteFraction) * 60;
+	} else if(secondFraction !== undefined) {
+		nanoseconds = fractionToNanoseconds(secondFraction);
+	}
+
+	if(nanoseconds % NANOSECONDS_PER_MILLISECOND !== 0) {
+		throw new RangeError(
+			'Invalid duration ' + JSON.stringify(text) + ', the duration can not be '
+			+ 'more precise than a millisecond'
+		);
+	}
+
+	let fractionMilliseconds = nanoseconds / NANOSECONDS_PER_MILLISECOND;
+	const extraMinutes = Math.floor(fractionMilliseconds / 60_000);
+	fractionMilliseconds -= extraMinutes * 60_000;
+	const extraSeconds = Math.floor(fractionMilliseconds / 1000);
+	fractionMilliseconds -= extraSeconds * 1000;
+
+	const factor = sign === '-' ? -1 : 1;
+	const value = (part: string | undefined, extra = 0) => factor * (Number(part ?? '0') + extra);
+
+	return {
+		years: value(years),
+		months: value(months),
+		weeks: value(weeks),
+		days: value(days),
+		hours: value(hours),
+		minutes: value(minutes, extraMinutes),
+		seconds: value(seconds, extraSeconds),
+		milliseconds: value(undefined, fractionMilliseconds)
+	};
+}
+
+function fractionToNanoseconds(fraction: string) {
+	return Number(fraction.padEnd(9, '0'));
 }
 
 function yearOf(value: string, text: string) {

@@ -10,3 +10,5 @@ export * from './LocalDateTime.js';
 
 export * from './Interval.js';
 export * from './DateInterval.js';
+
+export * from './Duration.js';

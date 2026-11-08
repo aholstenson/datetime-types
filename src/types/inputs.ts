@@ -1,3 +1,4 @@
+import type { DurationLike } from './DurationLike.js';
 import type { LocalDateLike } from './LocalDateLike.js';
 import type { LocalTimeLike } from './LocalTimeLike.js';
 import type { WithMonth } from './WithMonth.js';
@@ -54,3 +55,13 @@ export type YearInput = WithYear & CalendarFields;
  * `Temporal.PlainDate`.
  */
 export type MonthInput = WithMonth & CalendarFields;
+
+/**
+ * Object that `Duration.from()` accepts, such as `{ days: 3 }` or a
+ * `Temporal.Duration`. It must have at least one field. A missing field is
+ * zero.
+ */
+export type DurationInput = Partial<DurationLike> & {
+	readonly microseconds?: number;
+	readonly nanoseconds?: number;
+};

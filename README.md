@@ -4,8 +4,8 @@
 [![Build Status](https://github.com/aholstenson/datetime-types/actions/workflows/ci.yml/badge.svg)](https://github.com/aholstenson/datetime-types/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/aholstenson/datetime-types/badge.svg)](https://coveralls.io/github/aholstenson/datetime-types)
 
-This library provides immutable dates, times, intervals, periods and durations
-for JavaScript and TypeScript. These types help carry the intent of a value,
+This library provides immutable dates, times, intervals and durations for
+JavaScript and TypeScript. These types help carry the intent of a value,
 instead of representing everything as a `Date`.
 
 ```javascript
@@ -43,6 +43,8 @@ Types implemented:
   is not part of the interval
 * `DateInterval` for representing an interval between two dates, where both
   dates are part of the interval
+* `Duration` for representing an amount of time, such as 3 days or 1 year and
+  2 months
 
 ## Creating values
 
@@ -181,3 +183,21 @@ function that reads each side, such as
 `Interval.from('08:00/17:00', LocalTime.from)`.
 `Interval` also has `isEmpty`, which is true when the start equals the end.
 
+## Durations
+
+`Duration` has the same fields as `Temporal.Duration`, from `years` to
+`milliseconds`. `toString()` gives an ISO 8601 duration, such as `P1Y2M` or
+`PT1.5S`:
+
+```javascript
+import { Duration } from 'datetime-types';
+
+const duration = Duration.from({ hours: 1, minutes: 30 });
+
+duration.toString(); // 'PT1H30M'
+Duration.from('PT1.5H').minutes; // 30
+duration.negated().toString(); // '-PT1H30M'
+```
+
+A duration keeps each field as it is given, so 90 minutes stays 90 minutes.
+All fields must have the same sign.
