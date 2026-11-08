@@ -3,6 +3,7 @@ export type * from './types/index.js';
 export * from './DayOfWeek.js';
 export * from './Month.js';
 export * from './Year.js';
+export * from './YearMonth.js';
 
 export * from './LocalDate.js';
 export * from './LocalTime.js';

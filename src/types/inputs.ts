@@ -65,3 +65,9 @@ export type DurationInput = Partial<DurationLike> & {
 	readonly microseconds?: number;
 	readonly nanoseconds?: number;
 };
+
+/**
+ * Object that `YearMonth.from()` accepts, such as `{ year, month }`, a
+ * `LocalDate` or a `Temporal.PlainYearMonth`.
+ */
+export type YearMonthInput = WithYear & WithMonth & CalendarFields;

@@ -23,6 +23,11 @@ export interface OverflowOptions {
 export type DateUnit = 'years' | 'months' | 'weeks' | 'days';
 
 /**
+ * Units of a year and a month, from the largest to the smallest.
+ */
+export type YearMonthUnit = 'years' | 'months';
+
+/**
  * Units of a time, from the largest to the smallest.
  */
 export type TimeUnit = 'hours' | 'minutes' | 'seconds' | 'milliseconds';

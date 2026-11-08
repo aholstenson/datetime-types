@@ -39,6 +39,7 @@ Types implemented:
   `DayOfWeek.SUNDAY` (7). `DayOfWeek` is also the type of these numbers
 * `Month` for representing a month, with constants from `Month.JANUARY` to `Month.DECEMBER`
 * `Year` for representing a single year
+* `YearMonth` for representing a month in a specific year, such as March 2024
 * `Interval` for representing an interval between two values, where the end
   is not part of the interval
 * `DateInterval` for representing an interval between two dates, where both
@@ -93,16 +94,19 @@ dates.sort(LocalDate.compare);
 `LocalDate` and `LocalDateTime` have the same calendar fields as
 `Temporal.PlainDate`: `dayOfWeek`, `dayOfYear`, `daysInMonth`, `daysInYear`
 and `inLeapYear`. `dayOfWeek` uses ISO 8601 numbers, from `DayOfWeek.MONDAY`
-(1) to `DayOfWeek.SUNDAY` (7). `Year` has `daysInYear` and `inLeapYear`.
+(1) to `DayOfWeek.SUNDAY` (7). `YearMonth` has `daysInMonth`, `daysInYear`
+and `inLeapYear`. `Year` has `daysInYear` and `inLeapYear`.
 
 ```javascript
-import { DayOfWeek, LocalDate } from 'datetime-types';
+import { DayOfWeek, LocalDate, YearMonth } from 'datetime-types';
 
 const date = LocalDate.of(2024, 3, 3);
 
 date.dayOfWeek === DayOfWeek.SUNDAY; // true
 date.toLocalDateTime('08:30').toString(); // '2024-03-03T08:30:00'
 date.toLocalDateTime().toLocalTime().toString(); // '00:00:00'
+date.toYearMonth().toString(); // '2024-03'
+YearMonth.of(2024, 2).toLocalDate(31).toString(); // '2024-02-29'
 ```
 
 ## Changing values
@@ -111,7 +115,7 @@ The values do not change. `with()`, `add()` and `subtract()` give a new
 value. They use the same rules as `Temporal`:
 
 ```javascript
-import { LocalDate, LocalDateTime, LocalTime } from 'datetime-types';
+import { LocalDate, LocalDateTime, LocalTime, YearMonth } from 'datetime-types';
 
 const date = LocalDate.of(2024, 1, 31);
 
@@ -119,6 +123,7 @@ date.with({ day: 1 }).toString(); // '2024-01-01'
 date.add({ months: 1 }).toString(); // '2024-02-29'
 date.subtract('P1W').toString(); // '2024-01-24'
 LocalTime.of(23).add({ hours: 2 }).toString(); // '01:00:00'
+YearMonth.of(2024, 11).add({ months: 3 }).toString(); // '2025-02'
 LocalDateTime.of(2024, 1, 31, 23).add({ hours: 2 }).toString(); // '2024-02-01T01:00:00'
 ```
 

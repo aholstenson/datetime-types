@@ -14,6 +14,7 @@ const TIME = '(\\d{2}):(\\d{2})(?::(\\d{2})(?:[.,](\\d{1,9}))?)?';
 const YEAR_PATTERN = new RegExp('^' + YEAR + '$');
 const MONTH_PATTERN = /^--(\d{2})$/;
 const DATE_PATTERN = new RegExp('^' + DATE + '$');
+const YEAR_MONTH_PATTERN = new RegExp('^' + YEAR + '-(\\d{2})$');
 const TIME_PATTERN = new RegExp('^' + TIME + '$');
 const DATE_TIME_PATTERN = new RegExp('^' + DATE + '[Tt]' + TIME + '$');
 
@@ -74,6 +75,32 @@ export function parseMonth(text: string): number {
 	}
 
 	return Number(match[1]);
+}
+
+/**
+ * The numbers of a year and a month.
+ */
+export interface YearMonthParts {
+	year: number;
+	month: number;
+}
+
+/**
+ * Read a year and a month such as `2024-03` or `+020240-03`.
+ *
+ * @param text
+ *   the string to read
+ */
+export function parseYearMonth(text: string): YearMonthParts {
+	const match = YEAR_MONTH_PATTERN.exec(text);
+	if(! match) {
+		throw invalid('year and month', text);
+	}
+
+	return {
+		year: yearOf(match[1], text),
+		month: Number(match[2])
+	};
 }
 
 /**

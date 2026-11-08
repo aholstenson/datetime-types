@@ -11,6 +11,7 @@ import type { DayOfWeek } from './DayOfWeek.js';
 import type { Month } from './Month.js';
 import { LocalTime } from './LocalTime.js';
 import { LocalDate } from './LocalDate.js';
+import type { YearMonth } from './YearMonth.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseDateTime } from './helpers/parse.js';
 import { assertIsoCalendar, assertMillisecondPrecision } from './helpers/assertFields.js';
@@ -118,6 +119,13 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 */
 	public toLocalDate(): LocalDate {
 		return this.date;
+	}
+
+	/**
+	 * Get the year and month of this date and time.
+	 */
+	public toYearMonth(): YearMonth {
+		return this.date.toYearMonth();
 	}
 
 	/**

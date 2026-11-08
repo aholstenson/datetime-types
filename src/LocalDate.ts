@@ -19,6 +19,7 @@ import {
 
 import type { DayOfWeek } from './DayOfWeek.js';
 import { LocalDateTime } from './LocalDateTime.js';
+import { YearMonth } from './YearMonth.js';
 
 import { Duration } from './Duration.js';
 import {
@@ -104,6 +105,13 @@ export class LocalDate implements LocalDateLike {
 	 */
 	public toLocalDateTime(time?: string | LocalTimeInput): LocalDateTime {
 		return LocalDateTime.fromDateAndTime(this, time ?? {});
+	}
+
+	/**
+	 * Get the year and month of this date.
+	 */
+	public toYearMonth(): YearMonth {
+		return YearMonth.of(this.year, this.month);
 	}
 
 	/**
