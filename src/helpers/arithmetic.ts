@@ -13,7 +13,7 @@ import type {
 import type { DateParts, TimeParts } from './parse.js';
 import { daysFromEpoch, daysInMonth } from './calendar.js';
 import { compareInt } from './compareInt.js';
-import { assertInt } from './assertInt.js';
+import { assertInt, assertYear } from './assertInt.js';
 
 export const MILLISECONDS_PER_SECOND = 1000;
 export const MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND;
@@ -422,7 +422,7 @@ export function regulateDate(
 	fields: { year: unknown, month: unknown, day: unknown },
 	overflow: Overflow
 ): DateParts {
-	const year = assertInt(fields.year, 'year');
+	const year = assertYear(fields.year);
 	const month = regulateInRange(assertPositive(fields.month, 'month'), 'month', 1, 12, overflow);
 	const day = regulateDay(year, month, assertPositive(fields.day, 'day'), overflow);
 	return { year, month, day };

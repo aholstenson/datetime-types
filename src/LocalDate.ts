@@ -8,7 +8,7 @@ import type {
 } from './types/index.js';
 
 import { temporalOf } from './helpers/temporal.js';
-import { assertInt, assertIntInRange } from './helpers/assertInt.js';
+import { assertIntInRange, assertYear } from './helpers/assertInt.js';
 
 import { Month } from './Month.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
@@ -301,7 +301,7 @@ export class LocalDate implements LocalDateLike {
 	 * error if the date is invalid.
 	 *
 	 * @param year
-	 *   the year of the date
+	 *   the year of the date, from -271821 to 275760
 	 * @param month
 	 *   the month of the date
 	 * @param day
@@ -312,7 +312,7 @@ export class LocalDate implements LocalDateLike {
 		month: Month | number,
 		day: number
 	): LocalDate {
-		year = assertInt(year, 'year');
+		year = assertYear(year);
 
 		if(month instanceof Month) {
 			month = month.month;

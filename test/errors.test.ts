@@ -10,6 +10,7 @@ import { LocalDateTime } from '../src/LocalDateTime.js';
 import { LocalTime } from '../src/LocalTime.js';
 import { Month } from '../src/Month.js';
 import { Year } from '../src/Year.js';
+import { YearMonth } from '../src/YearMonth.js';
 
 describe('Errors', () => {
 	it('throw TypeError for a value that is not a number', () => {
@@ -29,6 +30,31 @@ describe('Errors', () => {
 		expect(() => LocalDateTime.of(2024, 1, 1, 0, 0, 0, 1000)).toThrow(RangeError);
 		expect(() => Month.of(0)).toThrow(RangeError);
 		expect(() => Year.of(Infinity)).toThrow(RangeError);
+	});
+
+	it('accept the first and the last year of the range', () => {
+		expect(LocalDate.of(-271821, 1, 1).toString()).toEqual('-271821-01-01');
+		expect(LocalDate.of(275760, 12, 31).toString()).toEqual('+275760-12-31');
+		expect(YearMonth.of(-271821, 1).toString()).toEqual('-271821-01');
+		expect(Year.of(275760).toString()).toEqual('+275760');
+	});
+
+	it('throw RangeError for a year out of range', () => {
+		expect(() => LocalDate.of(-271822, 12, 31)).toThrow('year must be between -271821 and 275760, got -271822');
+		expect(() => LocalDate.of(275761, 1, 1)).toThrow(RangeError);
+		expect(() => LocalDateTime.of(1_000_000, 1, 1)).toThrow(RangeError);
+		expect(() => YearMonth.of(2 ** 52, 1)).toThrow(RangeError);
+		expect(() => Year.of(-1_000_000)).toThrow(RangeError);
+		expect(() => LocalDate.from('+999999-01-01')).toThrow(RangeError);
+	});
+
+	it('throw RangeError when a calculation gives a year out of range', () => {
+		const last = LocalDate.of(275760, 12, 31);
+		expect(() => last.add({ days: 1 })).toThrow(RangeError);
+		expect(() => last.add({ days: 1e15 })).toThrow(RangeError);
+		expect(() => last.with({ year: 275761 })).toThrow(RangeError);
+		expect(() => LocalDateTime.of(-271821, 1, 1).subtract({ milliseconds: 1 })).toThrow(RangeError);
+		expect(() => YearMonth.of(275760, 12).add({ months: 1 })).toThrow(RangeError);
 	});
 
 	it('throw RangeError for a string that can not be read', () => {

@@ -46,3 +46,25 @@ function describe(value: unknown) {
 	if(typeof value === 'string') return JSON.stringify(value);
 	return typeof value;
 }
+
+/**
+ * The lowest year that a value can have. This is the same range that
+ * `Temporal` uses, so every year fits in the six digits of an ISO 8601
+ * string and the calculations stay exact.
+ */
+export const MIN_YEAR = -271821;
+
+/**
+ * The highest year that a value can have. See `MIN_YEAR`.
+ */
+export const MAX_YEAR = 275760;
+
+/**
+ * Throw an error if a value is not a year from `MIN_YEAR` to `MAX_YEAR`.
+ *
+ * @param value
+ *   the value to check
+ */
+export function assertYear(value: unknown): number {
+	return assertIntInRange(value, 'year', MIN_YEAR, MAX_YEAR);
+}

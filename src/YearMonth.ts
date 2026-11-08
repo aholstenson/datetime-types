@@ -11,7 +11,7 @@ import type {
 } from './types/index.js';
 
 import { temporalOf } from './helpers/temporal.js';
-import { assertInt, assertIntInRange } from './helpers/assertInt.js';
+import { assertIntInRange, assertYear } from './helpers/assertInt.js';
 import { assertIsoCalendar } from './helpers/assertFields.js';
 import { compareInt } from './helpers/compareInt.js';
 import { formatYear } from './helpers/formatYear.js';
@@ -235,13 +235,13 @@ export class YearMonth implements WithYear, WithMonth {
 	 * 1 to 12.
 	 *
 	 * @param year
-	 *   the year
+	 *   the year, from -271821 to 275760
 	 * @param month
 	 *   the month, from 1 to 12, or a `Month`
 	 */
 	public static of(year: number, month: Month | number): YearMonth {
 		return new YearMonth(
-			assertInt(year, 'year'),
+			assertYear(year),
 			assertIntInRange(month instanceof Month ? month.month : month, 'month', 1, 12)
 		);
 	}

@@ -166,8 +166,10 @@ LocalTime.of(8).until('09:30', { largestUnit: 'minutes' }).toString(); // 'PT90M
 
 `toString()` gives the ISO 8601 string, which is the same string that
 `Temporal` gives for the same value. A year outside 0 to 9999 has six digits
-and a sign, such as `+020240-01-02`. A time always has the seconds, such as
-`08:30:00`, and the fraction of a second has no trailing zeros.
+and a sign, such as `+020240-01-02`. A year must be from -271821 to 275760,
+which is the range that `Temporal` uses. A year outside it, also as the result
+of `add()` or `with()`, throws a `RangeError`. A time always has the seconds,
+such as `08:30:00`, and the fraction of a second has no trailing zeros.
 
 `JSON.stringify` writes the same string, because every type has `toJSON()`.
 

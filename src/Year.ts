@@ -1,6 +1,6 @@
 import type { WithYear, YearInput } from './types/index.js';
 import { formatYear } from './helpers/formatYear.js';
-import { assertInt } from './helpers/assertInt.js';
+import { assertYear } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseYear } from './helpers/parse.js';
@@ -83,12 +83,13 @@ export class Year implements WithYear {
 	}
 
 	/**
-	 * Create an object for the specified year.
+	 * Create an object for the specified year. Will throw a `RangeError` if
+	 * the year is not from -271821 to 275760.
 	 *
 	 * @param year
 	 */
 	public static of(year: number) {
-		year = assertInt(year, 'year');
+		year = assertYear(year);
 
 		return new Year(year);
 	}
