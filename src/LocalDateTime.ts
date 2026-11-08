@@ -43,6 +43,31 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		return this.time.milliOfSecond;
 	}
 
+	/**
+	 * Get if this date and time equals another object with date and time
+	 * properties.
+	 *
+	 * @param other
+	 */
+	public equals(other: (LocalDateLike & LocalTimeLike) | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this date and time with another object with date and time
+	 * properties. The date is compared first and then the time.
+	 *
+	 * @param other
+	 */
+	public compare(other: LocalDateLike & LocalTimeLike) {
+		const d = this.date.compare(other);
+		if(d !== 0) return d;
+
+		return this.time.compare(other);
+	}
+
 	public toString() {
 		return this.date.toString() + 'T' + this.time.toString();
 	}
