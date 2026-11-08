@@ -1,5 +1,6 @@
-import type { LocalDateLike, LocalDateTimeInput, LocalTimeLike } from './types/index.js';
+import type { LocalDateInput, LocalDateLike, LocalDateTimeInput, LocalTimeInput, LocalTimeLike } from './types/index.js';
 
+import type { DayOfWeek } from './DayOfWeek.js';
 import { LocalTime } from './LocalTime.js';
 import { LocalDate } from './LocalDate.js';
 import { noValueOf } from './helpers/noValueOf.js';
@@ -30,6 +31,42 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		return this.date.day;
 	}
 
+	/**
+	 * The day of the week, from `DayOfWeek.MONDAY` (1) to `DayOfWeek.SUNDAY`
+	 * (7).
+	 */
+	get dayOfWeek(): DayOfWeek {
+		return this.date.dayOfWeek;
+	}
+
+	/**
+	 * The day of the year, from 1 for 1 January.
+	 */
+	get dayOfYear() {
+		return this.date.dayOfYear;
+	}
+
+	/**
+	 * The number of days in the month of this date, from 28 to 31.
+	 */
+	get daysInMonth() {
+		return this.date.daysInMonth;
+	}
+
+	/**
+	 * The number of days in the year of this date, 365 or 366.
+	 */
+	get daysInYear() {
+		return this.date.daysInYear;
+	}
+
+	/**
+	 * If the year of this date is a leap year.
+	 */
+	get inLeapYear() {
+		return this.date.inLeapYear;
+	}
+
 	get hour() {
 		return this.time.hour;
 	}
@@ -44,6 +81,20 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 
 	get millisecond() {
 		return this.time.millisecond;
+	}
+
+	/**
+	 * Get the date part of this date and time.
+	 */
+	public toLocalDate(): LocalDate {
+		return this.date;
+	}
+
+	/**
+	 * Get the time part of this date and time.
+	 */
+	public toLocalTime(): LocalTime {
+		return this.time;
 	}
 
 	/**
@@ -195,15 +246,18 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	}
 
 	/**
-	 * Create a new local date time from a date and a time.
+	 * Create a local date and time from a date and a time.
 	 *
 	 * @param date
+	 *   the date, or a value that `LocalDate.from()` accepts
 	 * @param time
+	 *   the time, or a value that `LocalTime.from()` accepts
 	 */
-	public static fromDateAndTime(date: LocalDateLike, time: LocalTimeLike) {
-		const localDate = date instanceof LocalDate ? date : LocalDate.from(date);
-		const localTime = time instanceof LocalTime ? time : LocalTime.from(time);
-		return new LocalDateTime(localDate, localTime);
+	public static fromDateAndTime(
+		date: string | LocalDateInput,
+		time: string | LocalTimeInput
+	): LocalDateTime {
+		return new LocalDateTime(LocalDate.from(date), LocalTime.from(time));
 	}
 
 	/**

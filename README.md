@@ -77,6 +77,23 @@ Each type has a static `compare(a, b)` to sort values:
 dates.sort(LocalDate.compare);
 ```
 
+## Calendar fields and conversions
+
+`LocalDate` and `LocalDateTime` have the same calendar fields as
+`Temporal.PlainDate`: `dayOfWeek`, `dayOfYear`, `daysInMonth`, `daysInYear`
+and `inLeapYear`. `dayOfWeek` uses ISO 8601 numbers, from `DayOfWeek.MONDAY`
+(1) to `DayOfWeek.SUNDAY` (7). `Year` has `daysInYear` and `inLeapYear`.
+
+```javascript
+import { DayOfWeek, LocalDate } from 'datetime-types';
+
+const date = LocalDate.of(2024, 3, 3);
+
+date.dayOfWeek === DayOfWeek.SUNDAY; // true
+date.toLocalDateTime('08:30').toString(); // '2024-03-03T08:30:00'
+date.toLocalDateTime().toLocalTime().toString(); // '00:00:00'
+```
+
 ## Strings, JSON and comparison
 
 `toString()` gives the ISO 8601 string, which is the same string that
@@ -85,6 +102,9 @@ and a sign, such as `+020240-01-02`. A time always has the seconds, such as
 `08:30:00`, and the fraction of a second has no trailing zeros.
 
 `JSON.stringify` writes the same string, because every type has `toJSON()`.
+
+The test suite checks the strings, the calendar fields and the order of
+values against the built-in `Temporal` in Node 26 and later.
 
 The types do not convert to numbers or strings with operators. `a < b` and
 `a + b` throw a `TypeError`, as they do for `Temporal`. Use `compare()` or

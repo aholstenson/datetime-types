@@ -1,4 +1,4 @@
-import type { LocalDateInput, LocalDateLike } from './types/index.js';
+import type { LocalDateInput, LocalDateLike, LocalTimeInput } from './types/index.js';
 
 import { assertInt } from './helpers/assertInt.js';
 
@@ -9,6 +9,16 @@ import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseDate } from './helpers/parse.js';
 import { assertIsoCalendar } from './helpers/assertFields.js';
+import {
+	dayOfWeek,
+	dayOfYear,
+	daysInMonth,
+	daysInYear,
+	isLeapYear
+} from './helpers/calendar.js';
+
+import type { DayOfWeek } from './DayOfWeek.js';
+import { LocalDateTime } from './LocalDateTime.js';
 
 /**
  * Local date that represents just a date.
@@ -33,6 +43,53 @@ export class LocalDate implements LocalDateLike {
 		this.year = year;
 		this.month = month;
 		this.day = day;
+	}
+
+	/**
+	 * The day of the week, from `DayOfWeek.MONDAY` (1) to `DayOfWeek.SUNDAY`
+	 * (7).
+	 */
+	get dayOfWeek(): DayOfWeek {
+		return dayOfWeek(this.year, this.month, this.day);
+	}
+
+	/**
+	 * The day of the year, from 1 for 1 January.
+	 */
+	get dayOfYear() {
+		return dayOfYear(this.year, this.month, this.day);
+	}
+
+	/**
+	 * The number of days in the month of this date, from 28 to 31.
+	 */
+	get daysInMonth() {
+		return daysInMonth(this.year, this.month);
+	}
+
+	/**
+	 * The number of days in the year of this date, 365 or 366.
+	 */
+	get daysInYear() {
+		return daysInYear(this.year);
+	}
+
+	/**
+	 * If the year of this date is a leap year.
+	 */
+	get inLeapYear() {
+		return isLeapYear(this.year);
+	}
+
+	/**
+	 * Combine this date with a time. Without a time, the result is at
+	 * midnight.
+	 *
+	 * @param time
+	 *   the time, or a value that `LocalTime.from()` accepts
+	 */
+	public toLocalDateTime(time?: string | LocalTimeInput): LocalDateTime {
+		return LocalDateTime.fromDateAndTime(this, time ?? {});
 	}
 
 	/**
@@ -128,21 +185,9 @@ export class LocalDate implements LocalDateLike {
 			throw new Error('month must be between 1 and 12');
 		}
 
-		let daysInMonth = 31;
-		switch(month) {
-			case 2:
-				daysInMonth = isLeapYear(year) ? 29 : 28;
-				break;
-			case 4:
-			case 6:
-			case 9:
-			case 11:
-				daysInMonth = 30;
-				break;
-		}
-
-		if(day < 1 || day > daysInMonth) {
-			throw new Error('day must be between 1 and ' + daysInMonth);
+		const maxDay = daysInMonth(year, month);
+		if(day < 1 || day > maxDay) {
+			throw new Error('day must be between 1 and ' + maxDay);
 		}
 
 		return new LocalDate(year, month, day);
@@ -201,17 +246,4 @@ export class LocalDate implements LocalDateLike {
 	public static compare(a: string | LocalDateInput, b: string | LocalDateInput): -1 | 0 | 1 {
 		return LocalDate.from(a).compare(LocalDate.from(b));
 	}
-}
-
-/**
- * Check if a year is a leap year. Follows the rules outlined in ISO 8601.
- *
- * @param year
- */
-function isLeapYear(year: number) {
-	if((year & 3) !== 0) {
-		return false;
-	}
-
-	return (year % 100) !== 0 || (year % 400) === 0;
 }

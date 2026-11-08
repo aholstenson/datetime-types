@@ -5,6 +5,7 @@ import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseYear } from './helpers/parse.js';
 import { assertIsoCalendar } from './helpers/assertFields.js';
+import { daysInYear, isLeapYear } from './helpers/calendar.js';
 
 /**
  * Representation of a single year.
@@ -17,6 +18,20 @@ export class Year implements WithYear {
 
 	private constructor(year: number) {
 		this.year = year;
+	}
+
+	/**
+	 * The number of days in this year, 365 or 366.
+	 */
+	get daysInYear() {
+		return daysInYear(this.year);
+	}
+
+	/**
+	 * If this year is a leap year.
+	 */
+	get inLeapYear() {
+		return isLeapYear(this.year);
 	}
 
 	/**
