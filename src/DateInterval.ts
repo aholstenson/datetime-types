@@ -7,6 +7,7 @@ import {
 	compareStartToEnd,
 	formatInterval
 } from './helpers/intervals.js';
+import { noValueOf } from './helpers/noValueOf.js';
 
 /**
  * Interval between two dates, where both dates are inclusive. This matches
@@ -74,6 +75,21 @@ export class DateInterval {
 	 */
 	public compare(other: DateInterval) {
 		return compareIntervals(this, other);
+	}
+
+	/**
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('DateInterval');
 	}
 
 	/**

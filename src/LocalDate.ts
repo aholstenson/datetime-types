@@ -6,6 +6,7 @@ import { Month } from './Month.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
 import { formatYear } from './helpers/formatYear.js';
 import { compareInt } from './helpers/compareInt.js';
+import { noValueOf } from './helpers/noValueOf.js';
 
 /**
  * Local date that represents just a date.
@@ -70,7 +71,23 @@ export class LocalDate implements LocalDateLike {
 	}
 
 	/**
-	 * Turn this date into a standard string representation.
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('LocalDate');
+	}
+
+	/**
+	 * Turn this date into an ISO 8601 string, such as `2024-03-01`. A year
+	 * outside 0 to 9999 has six digits and a sign, such as `+020240-03-01`.
 	 */
 	public toString() {
 		let result = formatYear(this.year);

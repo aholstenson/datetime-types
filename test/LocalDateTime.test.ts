@@ -31,7 +31,7 @@ describe('LocalDateTime', () => {
 			LocalTime.of(2, 14)
 		);
 
-		expect(value.toString()).toEqual('2004-08-04T02:14');
+		expect(value.toString()).toEqual('2004-08-04T02:14:00');
 	});
 
 	it('fromDateAndTime with an invalid date throws', () => {

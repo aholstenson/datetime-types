@@ -2,6 +2,8 @@ import type { WithHour, WithMinute, WithSecond, WithMilliOfSecond, LocalTimeLike
 
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
+import { noValueOf } from './helpers/noValueOf.js';
+import { zeroPadInt } from './helpers/zeroPadInt.js';
 
 /**
  * Representation of a local time without timezone.
@@ -69,23 +71,34 @@ export class LocalTime implements LocalTimeLike {
 	}
 
 	/**
-	 * Turn this time into a standard string representation.
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('LocalTime');
+	}
+
+	/**
+	 * Turn this time into an ISO 8601 string, such as `08:30:00` or
+	 * `08:30:00.25`. The string always has the seconds. The fraction of a
+	 * second has no trailing zeros. This is the same string that `Temporal`
+	 * gives.
 	 */
 	public toString() {
-		let result = '';
-		result += (this.hour < 10 ? '0' : '') + this.hour;
-		result += ':';
-		result += (this.minute < 10 ? '0' : '') + this.minute;
-		if(this.second > 0 || this.milliOfSecond > 0) {
-			// If there is either a second or millisecond, add them to the result
-			result += ':';
-			result += (this.second < 10 ? '0' : '') + this.second;
+		let result = zeroPadInt(this.hour, 2)
+			+ ':' + zeroPadInt(this.minute, 2)
+			+ ':' + zeroPadInt(this.second, 2);
 
-			if(this.milliOfSecond) {
-				result += '.';
-				result += (this.milliOfSecond < 10 ? '00' : (this.milliOfSecond < 100 ? '0' : ''))
-					+ this.milliOfSecond;
-			}
+		if(this.milliOfSecond > 0) {
+			// Write the fraction without trailing zeros, as Temporal does.
+			result += '.' + zeroPadInt(this.milliOfSecond, 3).replace(/0+$/, '');
 		}
 
 		return result;

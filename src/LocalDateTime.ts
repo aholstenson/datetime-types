@@ -2,6 +2,7 @@ import type { LocalDateLike, LocalTimeLike } from './types/index.js';
 
 import { LocalTime } from './LocalTime.js';
 import { LocalDate } from './LocalDate.js';
+import { noValueOf } from './helpers/noValueOf.js';
 
 /**
  * Representation of a date and time without a timezone.
@@ -68,6 +69,25 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		return this.time.compare(other);
 	}
 
+	/**
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('LocalDateTime');
+	}
+
+	/**
+	 * Turn this date and time into an ISO 8601 string, such as
+	 * `2024-03-01T08:30:00`.
+	 */
 	public toString() {
 		return this.date.toString() + 'T' + this.time.toString();
 	}

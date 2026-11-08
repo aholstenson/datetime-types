@@ -161,12 +161,12 @@ describe('Interval', () => {
 
 	describe('toString', () => {
 		it('writes the start and the end', () => {
-			expect(Interval.between(t8, LocalTime.of(17, 30)).toString()).toEqual('08:00/17:30');
+			expect(Interval.between(t8, LocalTime.of(17, 30)).toString()).toEqual('08:00:00/17:30:00');
 		});
 
 		it('writes open sides as ..', () => {
-			expect(Interval.from(t8).toString()).toEqual('08:00/..');
-			expect(Interval.until(t17).toString()).toEqual('../17:00');
+			expect(Interval.from(t8).toString()).toEqual('08:00:00/..');
+			expect(Interval.until(t17).toString()).toEqual('../17:00:00');
 		});
 	});
 });

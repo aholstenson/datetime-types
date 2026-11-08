@@ -1,6 +1,7 @@
 import type { WithMonth } from './types/index.js';
 import { compareInt } from './helpers/compareInt.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
+import { noValueOf } from './helpers/noValueOf.js';
 
 /**
  * Representation of a month.
@@ -30,6 +31,21 @@ export class Month implements WithMonth {
 	 */
 	public compare(other: WithMonth) {
 		return compareInt(this.month, other.month);
+	}
+
+	/**
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('Month');
 	}
 
 	/**

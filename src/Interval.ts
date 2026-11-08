@@ -6,6 +6,7 @@ import {
 	compareStartToEnd,
 	formatInterval
 } from './helpers/intervals.js';
+import { noValueOf } from './helpers/noValueOf.js';
 
 /**
  * Interval between two values. The start is inclusive and the end is
@@ -91,6 +92,21 @@ export class Interval<T extends Comparable<T>> {
 	 */
 	public compare(other: Interval<T>) {
 		return compareIntervals(this, other);
+	}
+
+	/**
+	 * Get the string for this value in JSON. This is the same as
+	 * `toString()`.
+	 */
+	public toJSON() {
+		return this.toString();
+	}
+
+	/**
+	 * Throw a `TypeError`. Use `compare()` or `equals()` to compare values.
+	 */
+	public valueOf(): never {
+		return noValueOf('Interval');
 	}
 
 	/**

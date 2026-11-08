@@ -58,7 +58,7 @@ describe('LocalDate', () => {
 		expect(date.month).toEqual(12);
 		expect(date.dayOfMonth).toEqual(2);
 
-		expect(date.toString()).toEqual('-0201-12-02');
+		expect(date.toString()).toEqual('-000201-12-02');
 	});
 
 	it('of(20240, 12, 2)', () => {
@@ -69,7 +69,7 @@ describe('LocalDate', () => {
 		expect(date.month).toEqual(12);
 		expect(date.dayOfMonth).toEqual(2);
 
-		expect(date.toString()).toEqual('+20240-12-02');
+		expect(date.toString()).toEqual('+020240-12-02');
 	});
 });
 
@@ -92,7 +92,7 @@ describe('LocalDate validation', () => {
 	});
 
 	it('of(-4, 2, 29) accepts a leap day in a negative year', () => {
-		expect(LocalDate.of(-4, 2, 29).toString()).toEqual('-0004-02-29');
+		expect(LocalDate.of(-4, 2, 29).toString()).toEqual('-000004-02-29');
 	});
 
 	it('of(year, Month, day) accepts a Month', () => {

@@ -10,7 +10,7 @@ describe('LocalTime', () => {
 		expect(time.second).toEqual(0);
 		expect(time.milliOfSecond).toEqual(0);
 
-		expect(time.toString()).toEqual('02:14');
+		expect(time.toString()).toEqual('02:14:00');
 	});
 
 	it('of(2, 14, 0, 0)', () => {
@@ -22,7 +22,7 @@ describe('LocalTime', () => {
 		expect(time.second).toEqual(0);
 		expect(time.milliOfSecond).toEqual(0);
 
-		expect(time.toString()).toEqual('02:14');
+		expect(time.toString()).toEqual('02:14:00');
 	});
 
 	it('of(2, 14, 12)', () => {
@@ -99,6 +99,20 @@ describe('LocalTime formatting', () => {
 		expect(LocalTime.of(2, 14, 0, 5).toString()).toEqual('02:14:00.005');
 	});
 
+	it('of(2, 14) always writes the seconds', () => {
+		expect(LocalTime.of(2, 14).toString()).toEqual('02:14:00');
+	});
+
+	it.each([
+		[ 500, '02:14:00.5' ],
+		[ 250, '02:14:00.25' ],
+		[ 120, '02:14:00.12' ],
+		[ 9, '02:14:00.009' ],
+		[ 10, '02:14:00.01' ]
+	])('of(2, 14, 0, %s) writes the fraction without trailing zeros', (milli, expected) => {
+		expect(LocalTime.of(2, 14, 0, milli).toString()).toEqual(expected);
+	});
+
 	it('Maximum', () => {
 		expect(LocalTime.Maximum.toString()).toEqual('23:59:59.999');
 	});
@@ -106,8 +120,8 @@ describe('LocalTime formatting', () => {
 
 describe('LocalTime conversion', () => {
 	it('from(object) uses zero for missing fields', () => {
-		expect(LocalTime.from({ hour: 12 }).toString()).toEqual('12:00');
-		expect(LocalTime.from({ minute: 30 }).toString()).toEqual('00:30');
+		expect(LocalTime.from({ hour: 12 }).toString()).toEqual('12:00:00');
+		expect(LocalTime.from({ minute: 30 }).toString()).toEqual('00:30:00');
 	});
 
 	it('fromDate(date)', () => {

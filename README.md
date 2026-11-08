@@ -43,6 +43,28 @@ Types implemented:
 * `DateInterval` for representing an interval between two dates, where both
   dates are part of the interval
 
+## Strings, JSON and comparison
+
+`toString()` gives the ISO 8601 string, which is the same string that
+`Temporal` gives for the same value. A year outside 0 to 9999 has six digits
+and a sign, such as `+020240-01-02`. A time always has the seconds, such as
+`08:30:00`, and the fraction of a second has no trailing zeros.
+
+`JSON.stringify` writes the same string, because every type has `toJSON()`.
+
+The types do not convert to numbers or strings with operators. `a < b` and
+`a + b` throw a `TypeError`, as they do for `Temporal`. Use `compare()` or
+`equals()` to compare values:
+
+```javascript
+const a = LocalDate.of(2024, 3, 1);
+const b = LocalDate.of(2024, 3, 2);
+
+a.compare(b); // -1
+a.equals(b); // false
+JSON.stringify({ a }); // '{"a":"2024-03-01"}'
+```
+
 ## Intervals
 
 `Interval` and `DateInterval` both have a start and an end. A `null` start or
@@ -74,7 +96,7 @@ const afternoon = Interval.between(LocalTime.of(12), LocalTime.of(17));
 
 morning.contains(LocalTime.of(12)); // false
 morning.overlaps(afternoon); // false
-Interval.from(LocalTime.of(8)).toString(); // '08:00/..'
+Interval.from(LocalTime.of(8)).toString(); // '08:00:00/..'
 ```
 
 An interval of times can not go across midnight. Use `LocalDateTime` values

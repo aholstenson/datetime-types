@@ -12,16 +12,16 @@ describe('Year', () => {
 		expect(Year.of(5).toString()).toEqual('0005');
 	});
 
-	it('of(20240) adds a plus sign', () => {
-		expect(Year.of(20240).toString()).toEqual('+20240');
+	it('of(20240) writes a plus sign and six digits', () => {
+		expect(Year.of(20240).toString()).toEqual('+020240');
 	});
 
-	it('of(-5) writes a minus sign and four digits', () => {
-		expect(Year.of(-5).toString()).toEqual('-0005');
+	it('of(-5) writes a minus sign and six digits', () => {
+		expect(Year.of(-5).toString()).toEqual('-000005');
 	});
 
 	it('of(-20240) writes a minus sign', () => {
-		expect(Year.of(-20240).toString()).toEqual('-20240');
+		expect(Year.of(-20240).toString()).toEqual('-020240');
 	});
 
 	it('of(2024.5) throws', () => {
