@@ -8,3 +8,5 @@ export type * from './WithYear.js';
 
 export type * from './LocalDateLike.js';
 export type * from './LocalTimeLike.js';
+
+export type * from './Comparable.js';

@@ -1,3 +1,5 @@
+import type { Comparable } from '../types/index.js';
+
 /**
  * Compare two objects that can be null. The objects must have a `compare`
  * method.
@@ -10,7 +12,7 @@
  *   where `null` goes in the order. Use `first` when `null` means "no lower
  *   limit" and `last` when `null` means "no upper limit".
  */
-export function compareNullable<T extends { compare(v: T): -1 | 0 | 1 }>(
+export function compareNullable<T extends Comparable<T>>(
 	a: T | null,
 	b: T | null,
 	nulls: 'first' | 'last'

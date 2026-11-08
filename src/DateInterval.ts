@@ -1,24 +1,57 @@
+import type { LocalDateLike } from './types/index.js';
+
 import { LocalDate } from './LocalDate.js';
-import { compareNullable } from './helpers/compareNullable.js';
+import {
+	assertIntervalOrder,
+	compareIntervals,
+	compareStartToEnd,
+	formatInterval
+} from './helpers/intervals.js';
 
 /**
- * Representation of an interval between two dates, where both dates are
- * inclusive.
+ * Interval between two dates, where both dates are inclusive. This matches
+ * how people write date ranges, such as 1 March to 31 March. A `null` start
+ * or end makes that side of the interval open.
+ *
+ * Use `Interval` for an interval where the end is not part of the interval.
  */
 export class DateInterval {
 	/**
-	 * Start of the interval, inclusive.
+	 * Start of the interval, inclusive. `null` if the interval has no start.
 	 */
 	public readonly start: LocalDate | null;
 
 	/**
-	 * End of the interval, inclusive.
+	 * End of the interval, inclusive. `null` if the interval has no end.
 	 */
 	public readonly end: LocalDate | null;
 
 	private constructor(start: LocalDate | null, end: LocalDate | null) {
+		assertIntervalOrder(start, end);
+
 		this.start = start;
 		this.end = end;
+	}
+
+	/**
+	 * Get if the given date is in this interval.
+	 *
+	 * @param date
+	 */
+	public contains(date: LocalDateLike) {
+		return (this.start === null || this.start.compare(date) <= 0)
+			&& (this.end === null || this.end.compare(date) >= 0);
+	}
+
+	/**
+	 * Get if this interval and another interval have at least one date in
+	 * common.
+	 *
+	 * @param other
+	 */
+	public overlaps(other: DateInterval) {
+		return compareStartToEnd(this.start, other.end) <= 0
+			&& compareStartToEnd(other.start, this.end) <= 0;
 	}
 
 	/**
@@ -40,14 +73,20 @@ export class DateInterval {
 	 * @param other
 	 */
 	public compare(other: DateInterval) {
-		const s = compareNullable(this.start, other.start, 'first');
-		if(s !== 0) return s;
-
-		return compareNullable(this.end, other.end, 'last');
+		return compareIntervals(this, other);
 	}
 
 	/**
-	 * Create a new interval between the two dates.
+	 * Turn this interval into an ISO 8601 string, such as
+	 * `2024-03-01/2024-03-31`. An open start or end is written as `..`.
+	 */
+	public toString() {
+		return formatInterval(this.start, this.end);
+	}
+
+	/**
+	 * Create a new interval between two dates. Will throw an error if the
+	 * start is after the end.
 	 *
 	 * @param startInclusive
 	 * @param endInclusive
@@ -57,8 +96,7 @@ export class DateInterval {
 	}
 
 	/**
-	 * Create an interval from an unbounded start until (inclusive) the
-	 * specified date.
+	 * Create an interval from an open start until (inclusive) the given date.
 	 *
 	 * @param endInclusive
 	 */
@@ -67,8 +105,7 @@ export class DateInterval {
 	}
 
 	/**
-	 * Create an interval that starts at the given date but has an unbounded
-	 * end.
+	 * Create an interval that starts at the given date and has an open end.
 	 *
 	 * @param startInclusive
 	 */

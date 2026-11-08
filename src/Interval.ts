@@ -1,49 +1,133 @@
+import type { Comparable } from './types/index.js';
+
+import {
+	assertIntervalOrder,
+	compareIntervals,
+	compareStartToEnd,
+	formatInterval
+} from './helpers/intervals.js';
+
 /**
- * Representation of an interval.
+ * Interval between two values. The start is inclusive and the end is
+ * exclusive, so the interval holds every value from the start up to, but not
+ * including, the end. A `null` start or end makes that side of the interval
+ * open.
+ *
+ * The values must have a `compare` method, as `LocalDate`, `LocalTime`,
+ * `LocalDateTime`, `Year` and `Month` have. The start must not be after the
+ * end, so an interval of times can not go across midnight.
+ *
+ * Use `DateInterval` for an interval of dates where the last date is part of
+ * the interval.
  */
-export class Interval<T> {
+export class Interval<T extends Comparable<T>> {
 	/**
-	 * Start of the interval, inclusive.
+	 * Start of the interval, inclusive. `null` if the interval has no start.
 	 */
 	public readonly start: T | null;
 
 	/**
-	 * End of the interval, exclusive.
+	 * End of the interval, exclusive. `null` if the interval has no end.
 	 */
 	public readonly end: T | null;
 
 	private constructor(start: T | null, end: T | null) {
+		assertIntervalOrder(start, end);
+
 		this.start = start;
 		this.end = end;
 	}
 
 	/**
-	 * Create a new interval between the two times.
+	 * Get if this interval holds no values. This is true when the start
+	 * equals the end.
+	 */
+	public isEmpty() {
+		return this.start !== null
+			&& this.end !== null
+			&& this.start.compare(this.end) === 0;
+	}
+
+	/**
+	 * Get if the given value is in this interval.
+	 *
+	 * @param value
+	 */
+	public contains(value: T) {
+		return (this.start === null || this.start.compare(value) <= 0)
+			&& (this.end === null || this.end.compare(value) > 0);
+	}
+
+	/**
+	 * Get if this interval and another interval have at least one value in
+	 * common. An empty interval overlaps no interval.
+	 *
+	 * @param other
+	 */
+	public overlaps(other: Interval<T>) {
+		if(this.isEmpty() || other.isEmpty()) return false;
+
+		return compareStartToEnd(this.start, other.end) < 0
+			&& compareStartToEnd(other.start, this.end) < 0;
+	}
+
+	/**
+	 * Get if this interval equals another interval.
+	 *
+	 * @param other
+	 */
+	public equals(other: Interval<T> | null | undefined) {
+		if(! other) return false;
+
+		return this.compare(other) === 0;
+	}
+
+	/**
+	 * Compare this interval with another interval. The start is compared
+	 * first and then the end. An open start comes before every value and an
+	 * open end comes after every value.
+	 *
+	 * @param other
+	 */
+	public compare(other: Interval<T>) {
+		return compareIntervals(this, other);
+	}
+
+	/**
+	 * Turn this interval into an ISO 8601 string, such as
+	 * `08:00/17:00`. An open start or end is written as `..`.
+	 */
+	public toString() {
+		return formatInterval(this.start, this.end);
+	}
+
+	/**
+	 * Create a new interval between two values. Will throw an error if the
+	 * start is after the end.
 	 *
 	 * @param startInclusive
 	 * @param endExclusive
 	 */
-	public static between<T>(startInclusive: T | null, endExclusive: T | null) {
+	public static between<T extends Comparable<T>>(startInclusive: T | null, endExclusive: T | null) {
 		return new Interval(startInclusive, endExclusive);
 	}
 
 	/**
-	 * Create an interval from an unbounded start until (exclusive) the
-	 * specified time.
+	 * Create an interval from an open start until (exclusive) the given
+	 * value.
 	 *
 	 * @param endExclusive
 	 */
-	public static until<T>(endExclusive: T) {
-		return new Interval(null, endExclusive);
+	public static until<T extends Comparable<T>>(endExclusive: T) {
+		return new Interval<T>(null, endExclusive);
 	}
 
 	/**
-	 * Create an interval that starts at the given time but has an unbounded
-	 * end.
+	 * Create an interval that starts at the given value and has an open end.
 	 *
 	 * @param startInclusive
 	 */
-	public static from<T>(startInclusive: T) {
-		return new Interval(startInclusive, null);
+	public static from<T extends Comparable<T>>(startInclusive: T) {
+		return new Interval<T>(startInclusive, null);
 	}
 }
