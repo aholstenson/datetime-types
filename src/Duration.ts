@@ -9,6 +9,7 @@ import { temporalOf } from './helpers/temporal.js';
 import { assertInt } from './helpers/assertInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
 import { parseDuration } from './helpers/parse.js';
+import { assertDurationTimeInRange } from './helpers/arithmetic.js';
 
 /**
  * The fields of a duration, from the largest unit to the smallest.
@@ -33,6 +34,10 @@ const FIELDS = [
  * year is not always the same.
  *
  * All fields have the same sign. A negative duration goes back in time.
+ *
+ * The hours, minutes, seconds and milliseconds together must be at most
+ * `Number.MAX_SAFE_INTEGER` milliseconds, which is about 285 000 years. This
+ * keeps all calculations exact.
  */
 export class Duration implements DurationLike {
 	/**
@@ -224,7 +229,9 @@ export class Duration implements DurationLike {
 	 * `Temporal.Duration`.
 	 *
 	 * All fields must be integers with the same sign. A duration that is more
-	 * precise than a millisecond gives an error.
+	 * precise than a millisecond gives an error. A `RangeError` occurs if the
+	 * hours, minutes, seconds and milliseconds together are more than
+	 * `Number.MAX_SAFE_INTEGER` milliseconds.
 	 *
 	 * @param value
 	 *   the string or the object
@@ -281,6 +288,7 @@ export class Duration implements DurationLike {
 			fields[field] = value;
 		}
 
+		assertDurationTimeInRange(fields);
 		return new Duration(fields);
 	}
 }

@@ -38,6 +38,7 @@ import {
 	durationTimeToMilliseconds,
 	floorDiv,
 	isDateUnit,
+	assertSafeMilliseconds,
 	largestUnitOf,
 	MILLISECONDS_PER_DAY,
 	overflowOf,
@@ -45,7 +46,8 @@ import {
 	regulateTime,
 	TIME_UNITS,
 	timeFromMilliseconds,
-	timeToMilliseconds
+	timeToMilliseconds,
+	truncDiv
 } from './helpers/arithmetic.js';
 import type { DateUnit, DifferenceOptions, OverflowOptions, TimeUnit } from './types/index.js';
 
@@ -246,14 +248,19 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	public add(duration: string | DurationInput, options?: OverflowOptions): LocalDateTime {
 		const d = Duration.from(duration);
 		const overflow = overflowOf(options);
-		const milliseconds = timeToMilliseconds(this) + durationTimeToMilliseconds(d);
+		// Split the time of the duration into whole days and the rest, so that
+		// the sum with the time of this value stays small and exact.
+		const durationMilliseconds = durationTimeToMilliseconds(d);
+		const durationDays = truncDiv(durationMilliseconds, MILLISECONDS_PER_DAY);
+		const milliseconds = timeToMilliseconds(this)
+			+ durationMilliseconds - durationDays * MILLISECONDS_PER_DAY;
 		const extraDays = floorDiv(milliseconds, MILLISECONDS_PER_DAY);
 		const time = timeFromMilliseconds(milliseconds - extraDays * MILLISECONDS_PER_DAY);
 		const date = addToDate(this, {
 			years: d.years,
 			months: d.months,
 			weeks: d.weeks,
-			days: d.days + extraDays
+			days: d.days + durationDays + extraDays
 		}, overflow);
 		return LocalDateTime.of(
 			date.year, date.month, date.day,
@@ -307,6 +314,7 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 		}
 
 		milliseconds += date.days * MILLISECONDS_PER_DAY;
+		assertSafeMilliseconds(milliseconds);
 		return Duration.from(balanceTime(milliseconds, unit));
 	}
 

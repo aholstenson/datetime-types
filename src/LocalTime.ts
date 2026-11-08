@@ -134,7 +134,9 @@ export class LocalTime implements LocalTimeLike {
 	 *   the duration, or a value that `Duration.from()` accepts
 	 */
 	public add(duration: string | DurationInput): LocalTime {
-		const milliseconds = timeToMilliseconds(this) + durationTimeToMilliseconds(Duration.from(duration));
+		// Remove the whole days first, so that the sum stays small and exact.
+		const milliseconds = timeToMilliseconds(this)
+			+ durationTimeToMilliseconds(Duration.from(duration)) % MILLISECONDS_PER_DAY;
 		const time = timeFromMilliseconds(
 			milliseconds - floorDiv(milliseconds, MILLISECONDS_PER_DAY) * MILLISECONDS_PER_DAY
 		);

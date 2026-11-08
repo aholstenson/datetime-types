@@ -111,6 +111,42 @@ describe('LocalTime arithmetic', () => {
 	});
 });
 
+describe('Arithmetic with the largest duration', () => {
+	const max = Number.MAX_SAFE_INTEGER;
+	const dayMs = 86_400_000n;
+	const days = Number(BigInt(max) / dayMs);
+	const rest = Number(BigInt(max) % dayMs);
+
+	it('gives an exact LocalTime', () => {
+		expect(LocalTime.of(0).add({ milliseconds: max }).toString())
+			.toEqual(LocalTime.of(0).add({ milliseconds: rest }).toString());
+		expect(LocalTime.of(23, 59, 59, 999).subtract({ milliseconds: max }).toString())
+			.toEqual(LocalTime.of(23, 59, 59, 999).subtract({ milliseconds: rest }).toString());
+	});
+
+	it('gives an exact LocalDate', () => {
+		const date = LocalDate.of(-200000, 1, 1);
+		expect(date.add({ milliseconds: max }).toString())
+			.toEqual(date.add({ days }).toString());
+		expect(date.add({ milliseconds: max }).subtract({ milliseconds: max }).toString())
+			.toEqual(date.toString());
+	});
+
+	it('gives an exact LocalDateTime', () => {
+		const value = LocalDateTime.of(-200000, 1, 1, 23, 59, 59, 999);
+		expect(value.add({ milliseconds: max }).toString())
+			.toEqual(value.add({ days }).add({ milliseconds: rest }).toString());
+	});
+
+	it('throws RangeError when until() gives a duration above the limit', () => {
+		const first = LocalDateTime.of(-271821, 1, 1);
+		const last = LocalDateTime.of(275760, 1, 1);
+		expect(() => first.until(last, { largestUnit: 'hours' })).toThrow(RangeError);
+		expect(() => last.since(first, { largestUnit: 'milliseconds' })).toThrow(RangeError);
+		expect(first.until(last).days).toEqual(199_999_853);
+	});
+});
+
 describe('LocalDateTime arithmetic', () => {
 	const value = LocalDateTime.of(2024, 1, 31, 8);
 

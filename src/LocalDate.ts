@@ -39,7 +39,8 @@ import {
 	largestUnitOf,
 	MILLISECONDS_PER_DAY,
 	overflowOf,
-	regulateDate
+	regulateDate,
+	truncDiv
 } from './helpers/arithmetic.js';
 import type { DateUnit, DifferenceOptions, OverflowOptions } from './types/index.js';
 
@@ -206,7 +207,7 @@ export class LocalDate implements LocalDateLike {
 			years: d.years,
 			months: d.months,
 			weeks: d.weeks,
-			days: d.days + Math.trunc(durationTimeToMilliseconds(d) / MILLISECONDS_PER_DAY)
+			days: d.days + truncDiv(durationTimeToMilliseconds(d), MILLISECONDS_PER_DAY)
 		}, overflowOf(options));
 		return LocalDate.of(result.year, result.month, result.day);
 	}

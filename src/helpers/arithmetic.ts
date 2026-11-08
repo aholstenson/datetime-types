@@ -99,6 +99,18 @@ export function floorDiv(value: number, divisor: number) {
 }
 
 /**
+ * Truncating division, which rounds towards zero. The result is exact for
+ * every safe integer, also where `Math.trunc(value / divisor)` can round
+ * up to the next integer.
+ *
+ * @param value
+ * @param divisor
+ */
+export function truncDiv(value: number, divisor: number) {
+	return (value - value % divisor) / divisor;
+}
+
+/**
  * Get the date for a number of days from 1970-01-01.
  *
  * This is the `civil_from_days` algorithm by Howard Hinnant, which is the
@@ -302,6 +314,48 @@ export function timeFromMilliseconds(milliseconds: number): TimeParts {
 		second: Math.floor(milliseconds / MILLISECONDS_PER_SECOND) % 60,
 		millisecond: milliseconds % 1000
 	};
+}
+
+/**
+ * The error message for a duration that is too large.
+ */
+const TOO_LARGE = 'The hours, minutes, seconds and milliseconds of a duration together '
+	+ 'must be at most ' + Number.MAX_SAFE_INTEGER + ' milliseconds';
+
+/**
+ * Throw a `RangeError` if the time fields of a duration together are more
+ * than `Number.MAX_SAFE_INTEGER` milliseconds. Below this limit, all
+ * calculations with milliseconds are exact.
+ *
+ * The check uses `BigInt`, so it is also correct when a field is so large
+ * that the sum is not exact as a `number`.
+ *
+ * @param duration
+ */
+export function assertDurationTimeInRange(
+	duration: Pick<DurationParts, 'hours' | 'minutes' | 'seconds' | 'milliseconds'>
+) {
+	const total = BigInt(duration.hours) * BigInt(MILLISECONDS_PER_HOUR)
+		+ BigInt(duration.minutes) * BigInt(MILLISECONDS_PER_MINUTE)
+		+ BigInt(duration.seconds) * BigInt(MILLISECONDS_PER_SECOND)
+		+ BigInt(duration.milliseconds);
+	const limit = BigInt(Number.MAX_SAFE_INTEGER);
+	if(total > limit || total < -limit) {
+		throw new RangeError(TOO_LARGE);
+	}
+}
+
+/**
+ * Throw a `RangeError` if a number of milliseconds that a calculation gives
+ * is not a safe integer. Then the result can not be a duration. See
+ * `assertDurationTimeInRange`.
+ *
+ * @param milliseconds
+ */
+export function assertSafeMilliseconds(milliseconds: number) {
+	if(! Number.isSafeInteger(milliseconds)) {
+		throw new RangeError(TOO_LARGE);
+	}
 }
 
 /**

@@ -56,6 +56,33 @@ describe('Duration', () => {
 		});
 	});
 
+	describe('limit of the time fields', () => {
+		const max = Number.MAX_SAFE_INTEGER;
+
+		it('accepts time fields up to the limit', () => {
+			expect(Duration.from({ milliseconds: max }).toString()).toEqual('PT9007199254740.991S');
+			expect(Duration.from({ milliseconds: -max }).negated().milliseconds).toEqual(max);
+			expect(Duration.from({ hours: 2501999792 }).hours).toEqual(2501999792);
+		});
+
+		it('reads back the string of the largest duration', () => {
+			const duration = Duration.from({ milliseconds: max });
+			expect(Duration.from(duration.toString()).toString()).toEqual(duration.toString());
+		});
+
+		it('throws RangeError above the limit', () => {
+			expect(() => Duration.from({ seconds: max, milliseconds: 999 })).toThrow(RangeError);
+			expect(() => Duration.from({ hours: 2501999793 })).toThrow(RangeError);
+			expect(() => Duration.from({ hours: -max })).toThrow(RangeError);
+			expect(() => Duration.from({ hours: 1 }).with({ milliseconds: max })).toThrow(RangeError);
+			expect(() => Duration.from('PT9007199254741S')).toThrow(RangeError);
+		});
+
+		it('does not limit the date fields', () => {
+			expect(Duration.from({ days: max }).days).toEqual(max);
+		});
+	});
+
 	describe('toString', () => {
 		it.each([
 			[ { years: 1, months: 2, weeks: 3, days: 4 }, 'P1Y2M3W4D' ],

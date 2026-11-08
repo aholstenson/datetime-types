@@ -285,4 +285,7 @@ duration.negated().toString(); // '-PT1H30M'
 ```
 
 A duration keeps each field as it is given, so 90 minutes stays 90 minutes.
-All fields must have the same sign.
+All fields must have the same sign. The hours, minutes, seconds and
+milliseconds together must be at most `Number.MAX_SAFE_INTEGER` milliseconds,
+about 285 000 years, so that all calculations are exact. A larger duration,
+also as the result of `until()` or `since()`, throws a `RangeError`.
