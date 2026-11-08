@@ -6,6 +6,7 @@ import {
 	compareStartToEnd,
 	formatInterval
 } from './helpers/intervals.js';
+import { parseInterval } from './helpers/parse.js';
 import { noValueOf } from './helpers/noValueOf.js';
 
 /**
@@ -126,6 +127,34 @@ export class Interval<T extends Comparable<T>> {
 	 */
 	public static between<T extends Comparable<T>>(startInclusive: T | null, endExclusive: T | null) {
 		return new Interval(startInclusive, endExclusive);
+	}
+
+	/**
+	 * Read an interval from an ISO 8601 string, such as `08:00:00/17:00:00`.
+	 * Each side is read with `parseValue`, such as `LocalTime.from`. A side
+	 * that is `..` is open. Will throw an error if the start is after the
+	 * end.
+	 *
+	 * @param text
+	 *   the string to read
+	 * @param parseValue
+	 *   function that reads one side of the interval
+	 */
+	public static parse<T extends Comparable<T>>(text: string, parseValue: (value: string) => T) {
+		const [ start, end ] = parseInterval(text, parseValue);
+		return new Interval<T>(start, end);
+	}
+
+	/**
+	 * Compare two intervals. Use it to sort intervals, such as
+	 * `intervals.sort(Interval.compare)`. See `compare` on an interval for
+	 * the order.
+	 *
+	 * @param a
+	 * @param b
+	 */
+	public static compare<T extends Comparable<T>>(a: Interval<T>, b: Interval<T>) {
+		return a.compare(b);
 	}
 
 	/**

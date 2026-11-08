@@ -1,8 +1,10 @@
-import type { WithYear } from './types/index.js';
+import type { CalendarFields, WithYear } from './types/index.js';
 import { formatYear } from './helpers/formatYear.js';
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { parseYear } from './helpers/parse.js';
+import { assertIsoCalendar } from './helpers/assertFields.js';
 
 /**
  * Representation of a single year.
@@ -73,12 +75,46 @@ export class Year implements WithYear {
 	}
 
 	/**
-	 * Create a year from the given object.
+	 * Create a year from an ISO 8601 string or from an object.
 	 *
-	 * @param object
+	 * The string can be in the form that `toString()` gives, such as `2024`
+	 * or `+020240`.
+	 *
+	 * The object must have a numeric `year` property. This includes a
+	 * `LocalDate` and a `Temporal.PlainYearMonth`. An object with a calendar
+	 * other than `iso8601` gives an error.
+	 *
+	 * @param value
+	 *   the string or the object
 	 */
-	public static from(object: WithYear) {
-		return this.of(object.year);
+	public static from(value: string | (WithYear & CalendarFields)): Year {
+		if(typeof value === 'string') {
+			return Year.of(parseYear(value));
+		}
+
+		if(value instanceof Year) {
+			return value;
+		}
+
+		assertIsoCalendar(value);
+		return Year.of(value.year);
+	}
+
+	/**
+	 * Compare two years. Returns `-1` if `a` is before `b`, `0` if they are
+	 * equal and `1` if `a` is after `b`. Use it to sort years, such as
+	 * `years.sort(Year.compare)`.
+	 *
+	 * @param a
+	 *   a year, or a value that `from()` accepts
+	 * @param b
+	 *   a year, or a value that `from()` accepts
+	 */
+	public static compare(
+		a: string | (WithYear & CalendarFields),
+		b: string | (WithYear & CalendarFields)
+	): -1 | 0 | 1 {
+		return Year.from(a).compare(Year.from(b));
 	}
 
 	/**

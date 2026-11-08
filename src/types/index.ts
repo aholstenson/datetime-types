@@ -10,3 +10,4 @@ export type * from './LocalDateLike.js';
 export type * from './LocalTimeLike.js';
 
 export type * from './Comparable.js';
+export type * from './inputs.js';

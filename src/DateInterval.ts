@@ -7,6 +7,7 @@ import {
 	compareStartToEnd,
 	formatInterval
 } from './helpers/intervals.js';
+import { parseInterval } from './helpers/parse.js';
 import { noValueOf } from './helpers/noValueOf.js';
 
 /**
@@ -109,6 +110,31 @@ export class DateInterval {
 	 */
 	public static between(startInclusive: LocalDate | null, endInclusive: LocalDate | null) {
 		return new DateInterval(startInclusive, endInclusive);
+	}
+
+	/**
+	 * Read an interval from an ISO 8601 string, such as
+	 * `2024-03-01/2024-03-31`. A side that is `..` is open, such as
+	 * `2024-03-01/..`. Will throw an error if the start is after the end.
+	 *
+	 * @param text
+	 *   the string to read
+	 */
+	public static parse(text: string) {
+		const [ start, end ] = parseInterval(text, LocalDate.from);
+		return new DateInterval(start, end);
+	}
+
+	/**
+	 * Compare two intervals. Use it to sort intervals, such as
+	 * `intervals.sort(DateInterval.compare)`. See `compare` on an interval
+	 * for the order.
+	 *
+	 * @param a
+	 * @param b
+	 */
+	public static compare(a: DateInterval, b: DateInterval) {
+		return a.compare(b);
 	}
 
 	/**

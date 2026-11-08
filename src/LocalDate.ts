@@ -1,4 +1,4 @@
-import type { LocalDateLike } from './types/index.js';
+import type { LocalDateInput, LocalDateLike } from './types/index.js';
 
 import { assertInt } from './helpers/assertInt.js';
 
@@ -7,6 +7,8 @@ import { zeroPadInt } from './helpers/zeroPadInt.js';
 import { formatYear } from './helpers/formatYear.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { parseDate } from './helpers/parse.js';
+import { assertIsoCalendar } from './helpers/assertFields.js';
 
 /**
  * Local date that represents just a date.
@@ -160,17 +162,44 @@ export class LocalDate implements LocalDateLike {
 	}
 
 	/**
-	 * Create a local time from an object containing numeric `year`, `month`
-	 * and `day` properties.
+	 * Create a local date from an ISO 8601 string or from an object.
 	 *
-	 * @param object
+	 * The string can be in the form that `toString()` gives, such as
+	 * `2024-03-01` or `+020240-03-01`.
+	 *
+	 * The object must have numeric `year`, `month` and `day` properties. This
+	 * includes a `LocalDate`, a `LocalDateTime` and a `Temporal.PlainDate`.
+	 * An object with a calendar other than `iso8601` gives an error.
+	 *
+	 * @param value
+	 *   the string or the object
 	 */
-	public static from(object: LocalDateLike) {
-		return this.of(
-			object.year,
-			object.month,
-			object.day
-		);
+	public static from(value: string | LocalDateInput): LocalDate {
+		if(typeof value === 'string') {
+			const parts = parseDate(value);
+			return LocalDate.of(parts.year, parts.month, parts.day);
+		}
+
+		if(value instanceof LocalDate) {
+			return value;
+		}
+
+		assertIsoCalendar(value);
+		return LocalDate.of(value.year, value.month, value.day);
+	}
+
+	/**
+	 * Compare two dates. Returns `-1` if `a` is before `b`, `0` if they are
+	 * equal and `1` if `a` is after `b`. Use it to sort dates, such as
+	 * `dates.sort(LocalDate.compare)`.
+	 *
+	 * @param a
+	 *   a date, or a value that `from()` accepts
+	 * @param b
+	 *   a date, or a value that `from()` accepts
+	 */
+	public static compare(a: string | LocalDateInput, b: string | LocalDateInput): -1 | 0 | 1 {
+		return LocalDate.from(a).compare(LocalDate.from(b));
 	}
 }
 

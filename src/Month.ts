@@ -1,7 +1,9 @@
-import type { WithMonth } from './types/index.js';
+import type { CalendarFields, WithMonth } from './types/index.js';
 import { compareInt } from './helpers/compareInt.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { parseMonth } from './helpers/parse.js';
+import { assertIsoCalendar } from './helpers/assertFields.js';
 
 /**
  * Representation of a month.
@@ -57,6 +59,13 @@ export class Month implements WithMonth {
 		return '--' + zeroPadInt(this.month, 2);
 	}
 
+	/**
+	 * Get the month with the given number, from 1 for January to 12 for
+	 * December. Will throw an error for every other value.
+	 *
+	 * @param month
+	 *   the number of the month
+	 */
 	public static of(month: number) {
 		switch(month) {
 			case 1:
@@ -86,6 +95,48 @@ export class Month implements WithMonth {
 		}
 
 		throw new Error('month must be between 1 and 12');
+	}
+
+	/**
+	 * Get a month from an ISO 8601 string or from an object.
+	 *
+	 * The string can be in the form that `toString()` gives, such as `--03`.
+	 *
+	 * The object must have a numeric `month` property. This includes a
+	 * `LocalDate` and a `Temporal.PlainDate`. An object with a calendar other
+	 * than `iso8601` gives an error.
+	 *
+	 * @param value
+	 *   the string or the object
+	 */
+	public static from(value: string | (WithMonth & CalendarFields)): Month {
+		if(typeof value === 'string') {
+			return Month.of(parseMonth(value));
+		}
+
+		if(value instanceof Month) {
+			return value;
+		}
+
+		assertIsoCalendar(value);
+		return Month.of(value.month);
+	}
+
+	/**
+	 * Compare two months. Returns `-1` if `a` is before `b`, `0` if they are
+	 * equal and `1` if `a` is after `b`. Use it to sort months, such as
+	 * `months.sort(Month.compare)`.
+	 *
+	 * @param a
+	 *   a month, or a value that `from()` accepts
+	 * @param b
+	 *   a month, or a value that `from()` accepts
+	 */
+	public static compare(
+		a: string | (WithMonth & CalendarFields),
+		b: string | (WithMonth & CalendarFields)
+	): -1 | 0 | 1 {
+		return Month.from(a).compare(Month.from(b));
 	}
 
 	/**

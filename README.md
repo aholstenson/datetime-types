@@ -43,6 +43,40 @@ Types implemented:
 * `DateInterval` for representing an interval between two dates, where both
   dates are part of the interval
 
+## Creating values
+
+Use `of()` with numbers, or `from()` with an ISO 8601 string or an object:
+
+```javascript
+import { LocalDate, LocalDateTime, LocalTime } from 'datetime-types';
+
+LocalDate.of(2024, 3, 1);
+LocalDate.from('2024-03-01');
+LocalDate.from({ year: 2024, month: 3, day: 1 });
+
+LocalTime.of(8, 30);
+LocalTime.from('08:30');
+LocalTime.from({ hour: 8, minute: 30 });
+
+LocalDateTime.of(2024, 3, 1, 8, 30);
+LocalDateTime.from('2024-03-01T08:30:00');
+```
+
+`from()` uses the same field names as `Temporal`, so it also accepts
+`Temporal` values. It throws an error for a calendar other than `iso8601`,
+and for a time that is more precise than a millisecond:
+
+```javascript
+LocalDate.from(Temporal.PlainDate.from('2024-03-01'));
+LocalTime.from(Temporal.PlainTime.from('08:30:00.000001')); // throws
+```
+
+Each type has a static `compare(a, b)` to sort values:
+
+```javascript
+dates.sort(LocalDate.compare);
+```
+
 ## Strings, JSON and comparison
 
 `toString()` gives the ISO 8601 string, which is the same string that
@@ -103,5 +137,8 @@ An interval of times can not go across midnight. Use `LocalDateTime` values
 for an interval such as 22:00 to 02:00.
 
 Both types have `contains`, `overlaps`, `equals`, `compare` and `toString`.
+`DateInterval.parse('2024-03-01/..')` reads a string. `Interval.parse` needs a
+function that reads each side, such as
+`Interval.parse('08:00/17:00', LocalTime.from)`.
 `Interval` also has `isEmpty`, which is true when the start equals the end.
 

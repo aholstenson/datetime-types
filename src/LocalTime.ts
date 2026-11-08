@@ -1,8 +1,10 @@
-import type { WithHour, WithMinute, WithSecond, WithMillisecond, LocalTimeLike } from './types/index.js';
+import type { LocalTimeInput, LocalTimeLike } from './types/index.js';
 
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 import { noValueOf } from './helpers/noValueOf.js';
+import { parseTime } from './helpers/parse.js';
+import { assertMillisecondPrecision } from './helpers/assertFields.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
 
 /**
@@ -147,19 +149,53 @@ export class LocalTime implements LocalTimeLike {
 	}
 
 	/**
-	 * Create a local time from an object containing a combination of numeric
-	 * `hour`, `minute`, `second` or `millisecond` properties. If any
-	 * property is not present it will be set to `0`.
+	 * Create a local time from an ISO 8601 string or from an object.
 	 *
-	 * @param object
+	 * The string can be in the form that `toString()` gives, such as
+	 * `08:30:00` or `08:30:00.25`. The seconds and the fraction are optional,
+	 * so `08:30` is also accepted.
+	 *
+	 * The object can have numeric `hour`, `minute`, `second` and
+	 * `millisecond` properties. A missing property is zero. This includes a
+	 * `LocalTime`, a `LocalDateTime` and a `Temporal.PlainTime`.
+	 *
+	 * A time that is more precise than a millisecond gives an error, both in
+	 * a string and in the `microsecond` and `nanosecond` properties.
+	 *
+	 * @param value
+	 *   the string or the object
 	 */
-	public static from(object: WithHour | WithMinute | WithSecond | WithMillisecond) {
-		return this.of(
-			'hour' in object ? object.hour : 0,
-			'minute' in object ? object.minute : 0,
-			'second' in object ? object.second : 0,
-			'millisecond' in object ? object.millisecond : 0
+	public static from(value: string | LocalTimeInput): LocalTime {
+		if(typeof value === 'string') {
+			const parts = parseTime(value);
+			return LocalTime.of(parts.hour, parts.minute, parts.second, parts.millisecond);
+		}
+
+		if(value instanceof LocalTime) {
+			return value;
+		}
+
+		assertMillisecondPrecision(value);
+		return LocalTime.of(
+			value.hour ?? 0,
+			value.minute ?? 0,
+			value.second ?? 0,
+			value.millisecond ?? 0
 		);
+	}
+
+	/**
+	 * Compare two times. Returns `-1` if `a` is before `b`, `0` if they are
+	 * equal and `1` if `a` is after `b`. Use it to sort times, such as
+	 * `times.sort(LocalTime.compare)`.
+	 *
+	 * @param a
+	 *   a time, or a value that `from()` accepts
+	 * @param b
+	 *   a time, or a value that `from()` accepts
+	 */
+	public static compare(a: string | LocalTimeInput, b: string | LocalTimeInput): -1 | 0 | 1 {
+		return LocalTime.from(a).compare(LocalTime.from(b));
 	}
 
 	/**
