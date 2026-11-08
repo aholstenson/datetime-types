@@ -4,6 +4,7 @@ import { assertInt } from './helpers/assertInt.js';
 
 import { Month } from './Month.js';
 import { zeroPadInt } from './helpers/zeroPadInt.js';
+import { formatYear } from './helpers/formatYear.js';
 import { compareInt } from './helpers/compareInt.js';
 
 /**
@@ -68,15 +69,7 @@ export class LocalDate implements LocalDateLike {
 	 * Turn this date into a standard string representation.
 	 */
 	public toString() {
-		let result = '';
-		if(this.year < 0) {
-			result += '-' + zeroPadInt(Math.abs(this.year), 4);
-		} else if(this.year > 9999) {
-			result += '+' + zeroPadInt(this.year, 4);
-		} else {
-			result += zeroPadInt(this.year, 4);
-		}
-
+		let result = formatYear(this.year);
 		result += '-' + zeroPadInt(this.month, 2);
 		result += '-' + zeroPadInt(this.dayOfMonth, 2);
 		return result;

@@ -1,5 +1,5 @@
 import type { WithYear } from './types/index.js';
-import { zeroPadInt } from './helpers/zeroPadInt.js';
+import { formatYear } from './helpers/formatYear.js';
 import { assertInt } from './helpers/assertInt.js';
 import { compareInt } from './helpers/compareInt.js';
 
@@ -40,11 +40,7 @@ export class Year implements WithYear {
 	 * Turn this year into a string.
 	 */
 	public toString() {
-		if(this.year > 9999) {
-			return '+' + this.year;
-		} else {
-			return zeroPadInt(this.year, 4);
-		}
+		return formatYear(this.year);
 	}
 
 	/**

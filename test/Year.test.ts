@@ -16,6 +16,14 @@ describe('Year', () => {
 		expect(Year.of(20240).toString()).toEqual('+20240');
 	});
 
+	it('of(-5) writes a minus sign and four digits', () => {
+		expect(Year.of(-5).toString()).toEqual('-0005');
+	});
+
+	it('of(-20240) writes a minus sign', () => {
+		expect(Year.of(-20240).toString()).toEqual('-20240');
+	});
+
 	it('of(2024.5) throws', () => {
 		expect(() => Year.of(2024.5)).toThrow();
 	});
