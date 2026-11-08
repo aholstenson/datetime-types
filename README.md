@@ -150,15 +150,15 @@ const afternoon = Interval.between(LocalTime.of(12), LocalTime.of(17));
 
 morning.contains(LocalTime.of(12)); // false
 morning.overlaps(afternoon); // false
-Interval.from(LocalTime.of(8)).toString(); // '08:00:00/..'
+Interval.startingAt(LocalTime.of(8)).toString(); // '08:00:00/..'
 ```
 
 An interval of times can not go across midnight. Use `LocalDateTime` values
 for an interval such as 22:00 to 02:00.
 
 Both types have `contains`, `overlaps`, `equals`, `compare` and `toString`.
-`DateInterval.parse('2024-03-01/..')` reads a string. `Interval.parse` needs a
+`DateInterval.from('2024-03-01/..')` reads a string. `Interval.from` needs a
 function that reads each side, such as
-`Interval.parse('08:00/17:00', LocalTime.from)`.
+`Interval.from('08:00/17:00', LocalTime.from)`.
 `Interval` also has `isEmpty`, which is true when the start equals the end.
 

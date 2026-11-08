@@ -113,15 +113,22 @@ export class DateInterval {
 	}
 
 	/**
-	 * Read an interval from an ISO 8601 string, such as
-	 * `2024-03-01/2024-03-31`. A side that is `..` is open, such as
-	 * `2024-03-01/..`. Will throw an error if the start is after the end.
+	 * Create an interval from an ISO 8601 string or from another interval.
 	 *
-	 * @param text
-	 *   the string to read
+	 * The string can be in the form that `toString()` gives, such as
+	 * `2024-03-01/2024-03-31`. A side that is `..` is open, such as
+	 * `2024-03-01/..`. An interval is returned as it is. Will throw an error
+	 * if the start is after the end.
+	 *
+	 * @param value
+	 *   the string or the interval
 	 */
-	public static parse(text: string) {
-		const [ start, end ] = parseInterval(text, LocalDate.from);
+	public static from(value: string | DateInterval): DateInterval {
+		if(value instanceof DateInterval) {
+			return value;
+		}
+
+		const [ start, end ] = parseInterval(value, LocalDate.from);
 		return new DateInterval(start, end);
 	}
 
@@ -138,11 +145,12 @@ export class DateInterval {
 	}
 
 	/**
-	 * Create an interval from an open start until (inclusive) the given date.
+	 * Create an interval that has an open start and ends at the given date.
+	 * The end is part of the interval.
 	 *
 	 * @param endInclusive
 	 */
-	public static until(endInclusive: LocalDate) {
+	public static endingAt(endInclusive: LocalDate) {
 		return new DateInterval(null, endInclusive);
 	}
 
@@ -151,7 +159,7 @@ export class DateInterval {
 	 *
 	 * @param startInclusive
 	 */
-	public static from(startInclusive: LocalDate) {
+	public static startingAt(startInclusive: LocalDate) {
 		return new DateInterval(startInclusive, null);
 	}
 }

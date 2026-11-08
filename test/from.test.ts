@@ -221,25 +221,25 @@ describe('static compare', () => {
 
 	it('Interval.compare', () => {
 		const a = Interval.between(LocalTime.of(8), LocalTime.of(12));
-		const b = Interval.until(LocalTime.of(10));
+		const b = Interval.endingAt(LocalTime.of(10));
 		expect([ a, b ].sort(Interval.compare)).toEqual([ b, a ]);
 	});
 
 	it('DateInterval.compare', () => {
-		const a = DateInterval.parse('2024-03-01/2024-03-31');
-		const b = DateInterval.parse('../2024-01-01');
+		const a = DateInterval.from('2024-03-01/2024-03-31');
+		const b = DateInterval.from('../2024-01-01');
 		expect([ a, b ].sort(DateInterval.compare)).toEqual([ b, a ]);
 	});
 });
 
-describe('interval parse', () => {
+describe('interval from', () => {
 	it.each([
 		'2024-03-01/2024-03-31',
 		'2024-03-01/..',
 		'../2024-03-31',
 		'../..'
-	])('DateInterval.parse(%s) gives the same string back', text => {
-		expect(DateInterval.parse(text).toString()).toEqual(text);
+	])('DateInterval.from(%s) gives the same string back', text => {
+		expect(DateInterval.from(text).toString()).toEqual(text);
 	});
 
 	it.each([
@@ -248,21 +248,29 @@ describe('interval parse', () => {
 		'2024-03-31/2024-03-01',
 		'2024-03-01/P1M',
 		'2024-03-01/'
-	])('DateInterval.parse(%j) throws', text => {
-		expect(() => DateInterval.parse(text)).toThrow();
+	])('DateInterval.from(%j) throws', text => {
+		expect(() => DateInterval.from(text)).toThrow();
 	});
 
-	it('Interval.parse reads each side with the given function', () => {
-		const interval = Interval.parse('08:00/17:00', LocalTime.from);
+	it('Interval.from reads each side with the given function', () => {
+		const interval = Interval.from('08:00/17:00', LocalTime.from);
 		expect(interval.equals(Interval.between(LocalTime.of(8), LocalTime.of(17)))).toBe(true);
 		expect(interval.toString()).toEqual('08:00:00/17:00:00');
 	});
 
-	it('Interval.parse reads open sides', () => {
-		expect(Interval.parse('2024/..', Year.from).equals(Interval.from(Year.of(2024)))).toBe(true);
+	it('Interval.from reads open sides', () => {
+		expect(Interval.from('2024/..', Year.from).equals(Interval.startingAt(Year.of(2024)))).toBe(true);
 	});
 
-	it('Interval.parse throws when the start is after the end', () => {
-		expect(() => Interval.parse('17:00/08:00', LocalTime.from)).toThrow();
+	it('from returns an interval as it is', () => {
+		const dates = DateInterval.from('2024-03-01/..');
+		expect(DateInterval.from(dates)).toBe(dates);
+
+		const times = Interval.from('08:00/17:00', LocalTime.from);
+		expect(Interval.from(times, LocalTime.from)).toBe(times);
+	});
+
+	it('Interval.from throws when the start is after the end', () => {
+		expect(() => Interval.from('17:00/08:00', LocalTime.from)).toThrow();
 	});
 });

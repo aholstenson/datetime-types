@@ -16,7 +16,7 @@ const values = [
 	[ 'Year', Year.of(2024), '2024' ],
 	[ 'Month', Month.of(3), '--03' ],
 	[ 'Interval', Interval.between(time, LocalTime.of(9)), '08:30:00/09:00:00' ],
-	[ 'DateInterval', DateInterval.from(date), '2024-03-01/..' ]
+	[ 'DateInterval', DateInterval.startingAt(date), '2024-03-01/..' ]
 ] as const;
 
 describe.each(values)('%s', (_name, value, expected) => {

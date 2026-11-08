@@ -130,18 +130,27 @@ export class Interval<T extends Comparable<T>> {
 	}
 
 	/**
-	 * Read an interval from an ISO 8601 string, such as `08:00:00/17:00:00`.
-	 * Each side is read with `parseValue`, such as `LocalTime.from`. A side
-	 * that is `..` is open. Will throw an error if the start is after the
-	 * end.
+	 * Create an interval from an ISO 8601 string or from another interval.
 	 *
-	 * @param text
-	 *   the string to read
+	 * The string can be in the form that `toString()` gives, such as
+	 * `08:00:00/17:00:00`. Each side is read with `parseValue`, such as
+	 * `LocalTime.from`. A side that is `..` is open. An interval is returned
+	 * as it is. Will throw an error if the start is after the end.
+	 *
+	 * @param value
+	 *   the string or the interval
 	 * @param parseValue
 	 *   function that reads one side of the interval
 	 */
-	public static parse<T extends Comparable<T>>(text: string, parseValue: (value: string) => T) {
-		const [ start, end ] = parseInterval(text, parseValue);
+	public static from<T extends Comparable<T>>(
+		value: string | Interval<T>,
+		parseValue: (value: string) => T
+	): Interval<T> {
+		if(value instanceof Interval) {
+			return value;
+		}
+
+		const [ start, end ] = parseInterval(value, parseValue);
 		return new Interval<T>(start, end);
 	}
 
@@ -158,12 +167,12 @@ export class Interval<T extends Comparable<T>> {
 	}
 
 	/**
-	 * Create an interval from an open start until (exclusive) the given
-	 * value.
+	 * Create an interval that has an open start and ends at the given value.
+	 * The end is not part of the interval.
 	 *
 	 * @param endExclusive
 	 */
-	public static until<T extends Comparable<T>>(endExclusive: T) {
+	public static endingAt<T extends Comparable<T>>(endExclusive: T) {
 		return new Interval<T>(null, endExclusive);
 	}
 
@@ -172,7 +181,7 @@ export class Interval<T extends Comparable<T>> {
 	 *
 	 * @param startInclusive
 	 */
-	public static from<T extends Comparable<T>>(startInclusive: T) {
+	public static startingAt<T extends Comparable<T>>(startInclusive: T) {
 		return new Interval<T>(startInclusive, null);
 	}
 }

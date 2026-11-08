@@ -13,13 +13,13 @@ describe('DateInterval', () => {
 	});
 
 	it('until(end)', () => {
-		const interval = DateInterval.until(feb1);
+		const interval = DateInterval.endingAt(feb1);
 		expect(interval.start).toBeNull();
 		expect(interval.end).toBe(feb1);
 	});
 
 	it('from(start)', () => {
-		const interval = DateInterval.from(jan1);
+		const interval = DateInterval.startingAt(jan1);
 		expect(interval.start).toBe(jan1);
 		expect(interval.end).toBeNull();
 	});
@@ -35,35 +35,35 @@ describe('DateInterval', () => {
 	});
 
 	it('compare puts an open end after a bounded end', () => {
-		expect(DateInterval.from(jan1).compare(DateInterval.between(jan1, mar1))).toEqual(1);
-		expect(DateInterval.between(jan1, mar1).compare(DateInterval.from(jan1))).toEqual(-1);
+		expect(DateInterval.startingAt(jan1).compare(DateInterval.between(jan1, mar1))).toEqual(1);
+		expect(DateInterval.between(jan1, mar1).compare(DateInterval.startingAt(jan1))).toEqual(-1);
 	});
 
 	it('compare puts an open start before a bounded start', () => {
-		expect(DateInterval.until(mar1).compare(DateInterval.between(jan1, mar1))).toEqual(-1);
-		expect(DateInterval.between(jan1, mar1).compare(DateInterval.until(mar1))).toEqual(1);
+		expect(DateInterval.endingAt(mar1).compare(DateInterval.between(jan1, mar1))).toEqual(-1);
+		expect(DateInterval.between(jan1, mar1).compare(DateInterval.endingAt(mar1))).toEqual(1);
 	});
 
 	it('compare sorts open and bounded intervals', () => {
 		const sorted = [
-			DateInterval.from(jan1),
+			DateInterval.startingAt(jan1),
 			DateInterval.between(feb1, mar1),
-			DateInterval.until(feb1),
+			DateInterval.endingAt(feb1),
 			DateInterval.between(jan1, feb1)
 		].sort((a, b) => a.compare(b));
 
 		expect(sorted).toEqual([
-			DateInterval.until(feb1),
+			DateInterval.endingAt(feb1),
 			DateInterval.between(jan1, feb1),
-			DateInterval.from(jan1),
+			DateInterval.startingAt(jan1),
 			DateInterval.between(feb1, mar1)
 		]);
 	});
 
 	it('equals', () => {
 		expect(DateInterval.between(jan1, feb1).equals(DateInterval.between(LocalDate.of(2024, 1, 1), feb1))).toBe(true);
-		expect(DateInterval.from(jan1).equals(DateInterval.from(jan1))).toBe(true);
-		expect(DateInterval.until(jan1).equals(DateInterval.until(jan1))).toBe(true);
+		expect(DateInterval.startingAt(jan1).equals(DateInterval.startingAt(jan1))).toBe(true);
+		expect(DateInterval.endingAt(jan1).equals(DateInterval.endingAt(jan1))).toBe(true);
 		expect(DateInterval.between(jan1, feb1).equals(DateInterval.between(jan1, mar1))).toBe(false);
 		expect(DateInterval.between(jan1, feb1).equals(null)).toBe(false);
 	});
@@ -100,11 +100,11 @@ describe('DateInterval', () => {
 		});
 
 		it('follows open sides', () => {
-			expect(DateInterval.until(feb1).contains(LocalDate.of(1900, 1, 1))).toBe(true);
-			expect(DateInterval.until(feb1).contains(feb1)).toBe(true);
-			expect(DateInterval.until(feb1).contains(LocalDate.of(2024, 2, 2))).toBe(false);
-			expect(DateInterval.from(feb1).contains(LocalDate.of(3000, 1, 1))).toBe(true);
-			expect(DateInterval.from(feb1).contains(jan1)).toBe(false);
+			expect(DateInterval.endingAt(feb1).contains(LocalDate.of(1900, 1, 1))).toBe(true);
+			expect(DateInterval.endingAt(feb1).contains(feb1)).toBe(true);
+			expect(DateInterval.endingAt(feb1).contains(LocalDate.of(2024, 2, 2))).toBe(false);
+			expect(DateInterval.startingAt(feb1).contains(LocalDate.of(3000, 1, 1))).toBe(true);
+			expect(DateInterval.startingAt(feb1).contains(jan1)).toBe(false);
 		});
 	});
 
@@ -123,8 +123,8 @@ describe('DateInterval', () => {
 		});
 
 		it('follows open sides', () => {
-			expect(DateInterval.until(feb1).overlaps(DateInterval.from(feb1))).toBe(true);
-			expect(DateInterval.until(jan1).overlaps(DateInterval.from(feb1))).toBe(false);
+			expect(DateInterval.endingAt(feb1).overlaps(DateInterval.startingAt(feb1))).toBe(true);
+			expect(DateInterval.endingAt(jan1).overlaps(DateInterval.startingAt(feb1))).toBe(false);
 			expect(DateInterval.between(null, null).overlaps(DateInterval.between(jan1, feb1))).toBe(true);
 		});
 	});
@@ -135,8 +135,8 @@ describe('DateInterval', () => {
 		});
 
 		it('writes open sides as ..', () => {
-			expect(DateInterval.from(jan1).toString()).toEqual('2024-01-01/..');
-			expect(DateInterval.until(mar1).toString()).toEqual('../2024-03-01');
+			expect(DateInterval.startingAt(jan1).toString()).toEqual('2024-01-01/..');
+			expect(DateInterval.endingAt(mar1).toString()).toEqual('../2024-03-01');
 			expect(DateInterval.between(null, null).toString()).toEqual('../..');
 		});
 	});

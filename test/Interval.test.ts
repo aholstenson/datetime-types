@@ -18,13 +18,13 @@ describe('Interval', () => {
 		});
 
 		it('until(end)', () => {
-			const interval = Interval.until(t17);
+			const interval = Interval.endingAt(t17);
 			expect(interval.start).toBeNull();
 			expect(interval.end).toBe(t17);
 		});
 
 		it('from(start)', () => {
-			const interval = Interval.from(t8);
+			const interval = Interval.startingAt(t8);
 			expect(interval.start).toBe(t8);
 			expect(interval.end).toBeNull();
 		});
@@ -63,8 +63,8 @@ describe('Interval', () => {
 		});
 
 		it('is false for open intervals', () => {
-			expect(Interval.from(t8).isEmpty()).toBe(false);
-			expect(Interval.until(t8).isEmpty()).toBe(false);
+			expect(Interval.startingAt(t8).isEmpty()).toBe(false);
+			expect(Interval.endingAt(t8).isEmpty()).toBe(false);
 		});
 	});
 
@@ -90,10 +90,10 @@ describe('Interval', () => {
 		});
 
 		it('follows open sides', () => {
-			expect(Interval.until(t17).contains(LocalTime.MIN)).toBe(true);
-			expect(Interval.until(t17).contains(t17)).toBe(false);
-			expect(Interval.from(t8).contains(LocalTime.MAX)).toBe(true);
-			expect(Interval.from(t8).contains(LocalTime.of(7))).toBe(false);
+			expect(Interval.endingAt(t17).contains(LocalTime.MIN)).toBe(true);
+			expect(Interval.endingAt(t17).contains(t17)).toBe(false);
+			expect(Interval.startingAt(t8).contains(LocalTime.MAX)).toBe(true);
+			expect(Interval.startingAt(t8).contains(LocalTime.of(7))).toBe(false);
 		});
 
 		it('is false for every value in an empty interval', () => {
@@ -121,9 +121,9 @@ describe('Interval', () => {
 		});
 
 		it('follows open sides', () => {
-			expect(Interval.until(t12).overlaps(Interval.from(t8))).toBe(true);
-			expect(Interval.until(t8).overlaps(Interval.from(t8))).toBe(false);
-			expect(Interval.until(t8).overlaps(Interval.until(t17))).toBe(true);
+			expect(Interval.endingAt(t12).overlaps(Interval.startingAt(t8))).toBe(true);
+			expect(Interval.endingAt(t8).overlaps(Interval.startingAt(t8))).toBe(false);
+			expect(Interval.endingAt(t8).overlaps(Interval.endingAt(t17))).toBe(true);
 			expect(Interval.between<LocalTime>(null, null).overlaps(Interval.between(t8, t12))).toBe(true);
 		});
 
@@ -146,13 +146,13 @@ describe('Interval', () => {
 		});
 
 		it('compare puts an open start first and an open end last', () => {
-			expect(Interval.until(t17).compare(Interval.between(t8, t17))).toEqual(-1);
-			expect(Interval.from(t8).compare(Interval.between(t8, t17))).toEqual(1);
+			expect(Interval.endingAt(t17).compare(Interval.between(t8, t17))).toEqual(-1);
+			expect(Interval.startingAt(t8).compare(Interval.between(t8, t17))).toEqual(1);
 		});
 
 		it('equals', () => {
 			expect(Interval.between(t8, t17).equals(Interval.between(LocalTime.of(8), LocalTime.of(17)))).toBe(true);
-			expect(Interval.from(t8).equals(Interval.from(t8))).toBe(true);
+			expect(Interval.startingAt(t8).equals(Interval.startingAt(t8))).toBe(true);
 			expect(Interval.between(t8, t17).equals(Interval.between(t8, t12))).toBe(false);
 			expect(Interval.between(t8, t17).equals(null)).toBe(false);
 			expect(Interval.between(t8, t17).equals(undefined)).toBe(false);
@@ -165,8 +165,8 @@ describe('Interval', () => {
 		});
 
 		it('writes open sides as ..', () => {
-			expect(Interval.from(t8).toString()).toEqual('08:00:00/..');
-			expect(Interval.until(t17).toString()).toEqual('../17:00:00');
+			expect(Interval.startingAt(t8).toString()).toEqual('08:00:00/..');
+			expect(Interval.endingAt(t17).toString()).toEqual('../17:00:00');
 		});
 	});
 });
