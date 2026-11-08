@@ -269,7 +269,8 @@ export class LocalTime implements LocalTimeLike {
 	 *
 	 * The string can be in the form that `toString()` gives, such as
 	 * `08:30:00` or `08:30:00.25`. The seconds and the fraction are optional,
-	 * so `08:30` is also accepted.
+	 * so `08:30` is also accepted. A leap second in a string, such as
+	 * `23:59:60`, becomes second 59.
 	 *
 	 * The object can have numeric `hour`, `minute`, `second` and
 	 * `millisecond` properties. A missing property is zero. This includes a

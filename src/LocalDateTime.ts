@@ -419,7 +419,8 @@ export class LocalDateTime implements LocalDateLike, LocalTimeLike {
 	 * object.
 	 *
 	 * The string can be in the form that `toString()` gives, such as
-	 * `2024-03-01T08:30:00`. The seconds and the fraction are optional.
+	 * `2024-03-01T08:30:00`. The seconds and the fraction are optional. A leap
+	 * second in a string, such as `2016-12-31T23:59:60`, becomes second 59.
 	 *
 	 * The object must have numeric `year`, `month` and `day` properties, and
 	 * can have numeric `hour`, `minute`, `second` and `millisecond`

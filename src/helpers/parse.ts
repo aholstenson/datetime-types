@@ -121,6 +121,7 @@ export function parseDate(text: string): DateParts {
 /**
  * Read a time such as `08:30`, `08:30:15` or `08:30:15.25`. A fraction of a
  * second can have up to nine digits, but digits after the third must be zero.
+ * A leap second, such as `23:59:60`, becomes second 59.
  *
  * @param text
  *   the string to read
@@ -289,10 +290,14 @@ function timeOf(match: RegExpExecArray, index: number, text: string): TimeParts 
 		);
 	}
 
+	// ISO 8601 permits second 60 for a leap second. A time without a time
+	// zone can not tell when a leap second occurs, so second 60 becomes 59.
+	const second = Number(match[index + 2] ?? '0');
+
 	return {
 		hour: Number(match[index]),
 		minute: Number(match[index + 1]),
-		second: Number(match[index + 2] ?? '0'),
+		second: second === 60 ? 59 : second,
 		millisecond: Number(fraction.slice(0, 3))
 	};
 }
