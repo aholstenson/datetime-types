@@ -10,4 +10,15 @@ describe('DayOfWeek', () => {
 		expect(DayOfWeek.SATURDAY).toEqual(6);
 		expect(DayOfWeek.SUNDAY).toEqual(7);
 	});
+
+	it('can not be changed', () => {
+		expect(Object.isFrozen(DayOfWeek)).toBe(true);
+	});
+
+	it('is a type for the numbers 1 to 7', () => {
+		const day: DayOfWeek = 7;
+		// @ts-expect-error 0 is not a day of the week
+		const notDay: DayOfWeek = 0;
+		expect([ day, notDay ]).toEqual([ 7, 0 ]);
+	});
 });

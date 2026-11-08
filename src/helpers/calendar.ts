@@ -4,6 +4,8 @@
  * before 1582 and to year 0 and earlier.
  */
 
+import type { DayOfWeek } from '../DayOfWeek.js';
+
 const DAYS_BEFORE_MONTH = [ 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 ];
 
 /**
@@ -72,9 +74,9 @@ export function dayOfYear(year: number, month: number, day: number) {
  * @param day
  *   the day of the month, from 1
  */
-export function dayOfWeek(year: number, month: number, day: number) {
+export function dayOfWeek(year: number, month: number, day: number): DayOfWeek {
 	// 1970-01-01 was a Thursday, which is day 4.
-	return floorMod(daysFromEpoch(year, month, day) + 3, 7) + 1;
+	return floorMod(daysFromEpoch(year, month, day) + 3, 7) + 1 as DayOfWeek;
 }
 
 /**
