@@ -48,6 +48,7 @@ describe('Interval', () => {
 				.toEqual('2024-01-01/2024-02-01');
 			expect(Interval.between(Year.of(2000), Year.of(2010)).toString()).toEqual('2000/2010');
 			expect(Interval.between(Month.March, Month.June).contains(Month.April)).toBe(true);
+			expect(Interval.between(Month.March, Month.June).toString()).toEqual('--03/--06');
 		});
 
 		it('rejects types that are not comparable', () => {

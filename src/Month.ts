@@ -1,5 +1,6 @@
 import type { WithMonth } from './types/index.js';
 import { compareInt } from './helpers/compareInt.js';
+import { zeroPadInt } from './helpers/zeroPadInt.js';
 
 /**
  * Representation of a month.
@@ -29,6 +30,15 @@ export class Month implements WithMonth {
 	 */
 	public compare(other: WithMonth) {
 		return compareInt(this.month, other.month);
+	}
+
+	/**
+	 * Turn this month into a string in the form `--MM`, such as `--03` for
+	 * March. This is the month format of ISO 8601:2000 and XML Schema
+	 * `gMonth`.
+	 */
+	public toString() {
+		return '--' + zeroPadInt(this.month, 2);
 	}
 
 	public static of(month: number) {

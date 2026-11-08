@@ -33,4 +33,10 @@ describe('Month', () => {
 		expect(Month.March.equals(Month.April)).toBe(false);
 		expect(Month.March.equals(null)).toBe(false);
 	});
+
+	it('toString', () => {
+		expect(Month.January.toString()).toEqual('--01');
+		expect(Month.March.toString()).toEqual('--03');
+		expect(Month.December.toString()).toEqual('--12');
+	});
 });
